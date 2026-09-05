@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
+import { Icon } from '../components/ui.jsx'
 
 function greeting() {
   const h = new Date().getHours()
@@ -55,10 +56,12 @@ export function Home() {
       </div>
       <div className="grid-2">
         <div className="card pad hero-card">
-          <div className="hero-icon">◎</div>
+          <div className="hero-icon">
+            <Icon name="search" size={18} />
+          </div>
           <h2>Find your next knowledge gap</h2>
           <p className="muted" style={{ margin: '-6px 0 14px' }}>
-            Tutors cannot sit with every first-year student. Diagnose why you are stuck, then run a scripted
+            Tutors cannot sit with every students. Diagnose why you are stuck, then run a scripted
             check with a peer in the same unit.
           </p>
           <div className="row">
