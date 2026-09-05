@@ -2,3 +2,8 @@
 .DS_Store
 .vscode
 .cursor
+node_modules
+*.db
+server/data
+server/uploads
+client/dist
