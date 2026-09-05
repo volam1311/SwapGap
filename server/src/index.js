@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { db } from './db.js'
-import { seed } from './seed.js'
+import { seed, ensureDemoPair } from './seed.js'
 import { authRoutes } from './routes/auth.js'
 import { meRoutes } from './routes/me.js'
 import { diagnoseRoutes } from './routes/diagnose.js'
@@ -14,7 +14,10 @@ import { questionRoutes, notificationRoutes, reportRoutes } from './routes/commu
 const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n
 if (count === 0) {
   await seed()
-  console.log('Database empty — seeded demo users (maya@qut.edu.au / gapswap)')
+  console.log('Database empty — seeded demo users (maya@qut.edu.au / alex@qut.edu.au / gapswap)')
+} else if (!db.prepare('SELECT id FROM users WHERE id = ?').get('maya')) {
+  ensureDemoPair()
+  console.log('Restored Maya and Alex demo accounts')
 }
 
 const app = express()

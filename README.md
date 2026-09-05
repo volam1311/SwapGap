@@ -4,10 +4,17 @@ AI-powered peer-learning: diagnose the misconception, map it on a Learning GPS, 
 
 ## Demo login
 
+Maya (needs Nested loops, teaches Functions):
+
 - Email: `maya@qut.edu.au`
 - Password: `gapswap`
 
-Or click **Continue as Maya (demo)** on the login page.
+Alex (Maya’s session partner — teaches Nested loops, needs Functions):
+
+- Email: `alex@qut.edu.au`
+- Password: `gapswap`
+
+Or use **Continue as Maya** / **Continue as Alex** on the login page. Those buttons restore the shared demo session.
 
 ## Run locally
 
@@ -34,12 +41,13 @@ Without an OpenAI key the nested-loop diagnostic still works using the built-in 
 
 ## Judge walkthrough
 
-1. Land → log in as Maya.
-2. Home → Discover Gaps → keep the inner-loop question → Start diagnosis.
-3. Answer three checkpoints (anything reasonable is fine) → Learning GPS shows **Nested loops** as the red gap.
-4. Find a Match → Alex T. (~94% reciprocal swap) → Confirm session.
-5. Join when ready → Ask for a hint / switch roles → Ready to verify.
-6. Answer the transfer quiz → Nested loops turns **Mastered**.
+1. Land → **Continue as Maya**.
+2. Home → Discover Gaps → keep the inner-loop question and **Use my current unit** → Start diagnosis.
+3. Answer three checkpoints → Learning GPS shows **Nested loops** as the red gap.
+4. Find a Match → Alex T. (~94% reciprocal swap) → Confirm session, **or** open the already-booked GapSwap with Alex.
+5. In another browser, **Continue as Alex** to join the same session from the other side.
+6. Join when ready → Ask for a hint / switch roles → Ready to verify.
+7. Answer the transfer quiz → Nested loops turns **Mastered**.
 
 ## What is real vs stand-in
 

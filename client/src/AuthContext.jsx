@@ -42,8 +42,8 @@ export function AuthProvider({ children }) {
     return data.user
   }
 
-  async function demo() {
-    const data = await api('/api/auth/demo', { method: 'POST' })
+  async function demo(as = 'maya') {
+    const data = await api('/api/auth/demo', { method: 'POST', body: { as } })
     setToken(data.token)
     setUser(data.user)
     return data.user
