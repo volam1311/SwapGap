@@ -1,5 +1,8 @@
 import 'dotenv/config'
+import fs from 'node:fs'
 import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import express from 'express'
 import cors from 'cors'
 import { db } from './db.js'
@@ -40,6 +43,17 @@ certificateRoutes(app)
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, openai: Boolean(process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-key')) })
 })
+
+const clientDist = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'client', 'dist')
+const indexHtml = path.join(clientDist, 'index.html')
+if (fs.existsSync(indexHtml)) {
+  app.use(express.static(clientDist))
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+    if (req.path.startsWith('/api')) return next()
+    res.sendFile(indexHtml)
+  })
+}
 
 function lanAddresses() {
   const out = []

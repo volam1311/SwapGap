@@ -2,11 +2,17 @@
   "name": "gapswap",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "install:all": "npm install --prefix server && npm install --prefix client",
     "dev": "concurrently -n api,web -c blue,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "share": "npx --yes cloudflared tunnel --protocol http2 --url http://localhost:5173",
-    "seed": "npm run seed --prefix server"
+    "seed": "npm run seed --prefix server",
+    "build": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client",
+    "start": "npm run start --prefix server"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
