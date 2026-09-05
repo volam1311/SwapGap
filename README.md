@@ -28,6 +28,8 @@ npm run dev
 
 That starts the API on port 4000 and the web app on port 5173. Open [http://localhost:5173](http://localhost:5173). Ctrl+C stops both.
 
+People on the same Wi‑Fi can open the **Network** URL Vite prints (for example `http://192.168.x.x:5173`). Campus Wi‑Fi (including QUT) often blocks phones from reaching laptops. If it hangs, keep `npm run dev` running and in a **second** terminal run `npm run share` — that prints a public `https://….trycloudflare.com` link anyone can open. The public certificate page `/c/GS-2026S2-MAYA` does not require login.
+
 First-time setup: copy `server/.env.example` to `server/.env` and add your `OPENAI_API_KEY`. The database seeds itself if it is empty; run `npm run seed` to reset the Maya demo.
 
 To run the processes separately instead:
