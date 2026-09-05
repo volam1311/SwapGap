@@ -48,7 +48,7 @@ export function Landing() {
           </p>
           <GpsMini />
           <p className="product-note">
-            Success is the red node turning green after a transfer quiz — not a session booked. Coming later:
+            Success is the red node turning green after a transfer quiz - not a session booked. Coming later:
             live two-way video, calendar sync, university SSO, and a full whiteboard. This demo uses a meeting
             link, a scripted session pack, and an in-app calendar file.
           </p>
@@ -76,7 +76,7 @@ export function Landing() {
         <div className="card pad">
           <h3>The Australian problem</h3>
           <p>
-          First-year IT cohorts at universities like QUT run hundreds of students deep. Tutorials can't diagnose every student who's stuck — and generic AI tutors introduce academic-integrity risk.
+          First-year IT cohorts at universities like QUT run hundreds of students deep. Tutorials can't diagnose every student who's stuck - and generic AI tutors introduce academic-integrity risk.
           </p>
         </div>
         <div className="card pad">
