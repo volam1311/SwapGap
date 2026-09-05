@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, getToken } from '../api.js'
-import { Avatar } from '../components/ui.jsx'
+import { Avatar, Icon } from '../components/ui.jsx'
 
 export function Sessions() {
   const [data, setData] = useState(null)
@@ -95,16 +95,23 @@ function SessionConfirm({ session, onJoin, onCancel }) {
               <Avatar name={session.you.name} color={session.you.color} size={64} />
               <p>You facilitate {session.youFacilitateConcept}</p>
             </div>
-            <div className="arrow">↔</div>
+            <div className="arrow">
+              <Icon name="swap" size={20} />
+            </div>
             <div style={{ textAlign: 'center' }}>
               <Avatar name={session.peer.name} color={session.peer.color} size={64} />
               <p>They facilitate {session.peerFacilitateConcept}</p>
             </div>
           </div>
           <h3>Preparation</h3>
-          <ul>
+          <ul className="check-list">
             {session.checklist.map((c) => (
-              <li key={c}>✓ {c}</li>
+              <li key={c}>
+                <span className="check-mark">
+                  <Icon name="check" size={13} />
+                </span>
+                {c}
+              </li>
             ))}
           </ul>
         </div>
@@ -250,7 +257,20 @@ function SessionRoom({ session, setSession }) {
                 </tbody>
               </table>
             )}
-            <div className="tools">✎ ⌫ T ⬤ ↺ ↻</div>
+            <div className="tools">
+              {[
+                ['pencil', 'Draw'],
+                ['erase', 'Erase'],
+                ['type', 'Text'],
+                ['dot', 'Marker'],
+                ['undo', 'Undo'],
+                ['redo', 'Redo'],
+              ].map(([name, label]) => (
+                <button key={name} type="button" className="tool" title={label} aria-label={label}>
+                  <Icon name={name} size={16} />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <div className="stack">

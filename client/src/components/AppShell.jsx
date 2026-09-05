@@ -1,13 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Brand, TopBar } from './ui.jsx'
+import { Brand, Icon, TopBar } from './ui.jsx'
 
 const links = [
-  { to: '/home', label: 'Home', icon: '⌂' },
-  { to: '/discover', label: 'Discover Gaps', icon: '?' },
-  { to: '/gps', label: 'Learning GPS', icon: '◎' },
-  { to: '/match', label: 'Find a Match', icon: '⇄' },
-  { to: '/sessions', label: 'Sessions', icon: '▣' },
-  { to: '/questions', label: 'Questions', icon: '✎' },
+  { to: '/home', label: 'Home', icon: 'home' },
+  { to: '/discover', label: 'Discover Gaps', icon: 'search' },
+  { to: '/gps', label: 'Learning GPS', icon: 'gps' },
+  { to: '/match', label: 'Find a Match', icon: 'swap' },
+  { to: '/sessions', label: 'Sessions', icon: 'calendar' },
+  { to: '/questions', label: 'Questions', icon: 'chat' },
 ]
 
 export function AppShell() {
@@ -18,7 +18,9 @@ export function AppShell() {
         <nav className="nav-list">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              <span>{l.icon}</span>
+              <span className="nav-icon">
+                <Icon name={l.icon} size={18} />
+              </span>
               {l.label}
             </NavLink>
           ))}

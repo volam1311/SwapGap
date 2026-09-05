@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
-import { Avatar, SafetyNote } from '../components/ui.jsx'
+import { Avatar, Icon, SafetyNote } from '../components/ui.jsx'
 
 const MODES = [
   { id: 'swap', label: 'Knowledge swap' },
@@ -74,7 +74,9 @@ export function Match() {
       </div>
       <div className="swap-heads">
         <div className="card">You need a check on: <b>{data.youNeed || 'Not mapped yet'}</b></div>
-        <div className="arrow">↔</div>
+        <div className="arrow">
+          <Icon name="swap" size={20} />
+        </div>
         <div className="card">You can facilitate: <b>{data.youCanTeach || 'After a diagnostic'}</b></div>
       </div>
       {!data.youNeed && (

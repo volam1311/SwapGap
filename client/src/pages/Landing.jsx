@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Brand } from '../components/ui.jsx'
+import { Brand, GpsPath } from '../components/ui.jsx'
 
 export function Landing() {
   return (
@@ -61,45 +61,40 @@ export function Landing() {
         </div>
         <div className="loop-step">
           <b>02</b>
-          <span>Route to the cheapest sufficient support</span>
+          <span>Locate it on a Learning GPS</span>
         </div>
         <div className="loop-step">
           <b>03</b>
-          <span>Run a scripted peer check against approved content</span>
+          <span>Match with a peer for a reciprocal knowledge swap</span>
         </div>
         <div className="loop-step">
           <b>04</b>
-          <span>Verify improvement — or escalate to Student Success</span>
+          <span>Verify the gain with a post-session check</span>
         </div>
       </section>
       <section className="landing-proof">
         <div className="card pad">
           <h3>The Australian problem</h3>
           <p>
-            First-year IT cohorts at universities like QUT are hundreds of students wide. Tutorials cannot
-            diagnose every stuck student, and generic AI tutors create academic-integrity risk.
+          First-year IT cohorts at universities like QUT run hundreds of students deep. Tutorials can't diagnose every student who's stuck — and generic AI tutors introduce academic-integrity risk.
           </p>
         </div>
         <div className="card pad">
           <h3>How we measure success</h3>
           <p>
-            Diagnostic completed → gap on the GPS → scripted check → transfer quiz passed. The metric is
-            mastery movement, not time on the platform.
+          Diagnostic completed → gap mapped on the GPS → 20-minute reciprocal swap → transfer quiz passed. The metric is mastery movement, not time on the platform.
           </p>
         </div>
         <div className="card pad">
           <h3>Human oversight</h3>
           <p>
-            We do not teach. Content is system-provided; peers check whether you can explain it back. We do
-            not replace Student Success — we filter foundational gaps and escalate the cases that need a
-            trained tutor, complete with a diagnostic profile.
+          AI locates the gap. A verified .edu.au email peer teaches it. SwapGap never writes assessment answers, and it never replaces lecturers, tutors, or official support.
           </p>
         </div>
         <div className="card pad">
-          <h3>By-product</h3>
+          <h3>Employability</h3>
           <p>
-            Verified support can become a semester certificate for a CV or LinkedIn. That is evidence of the
-            loop, not the product.
+          Verified peer teaching earns a semester certificate for a CV or LinkedIn — proof of communication and support skills, not a university award.
           </p>
         </div>
       </section>
@@ -108,24 +103,15 @@ export function Landing() {
 }
 
 function GpsMini() {
-  const nodes = [
-    ['Variables', 'mastered'],
-    ['Functions', 'mastered'],
-    ['Loops', 'developing'],
-    ['Nested loops', 'gap'],
-    ['Lists', 'next'],
-  ]
   return (
-    <div className="gps">
-      {nodes.map(([name, status], i) => (
-        <div key={name} style={{ display: 'flex', flex: i < 4 ? 1 : 'none', alignItems: 'center' }}>
-          <div className={`gps-node ${status}`}>
-            <div className="orb">{status === 'mastered' ? '✓' : status === 'gap' ? '!' : status === 'developing' ? '~' : '→'}</div>
-            <small>{name}</small>
-          </div>
-          {i < 4 && <div className="gps-line" />}
-        </div>
-      ))}
-    </div>
+    <GpsPath
+      path={[
+        { id: 'variables', name: 'Variables', status: 'mastered' },
+        { id: 'functions', name: 'Functions', status: 'mastered' },
+        { id: 'loops', name: 'Loops', status: 'developing' },
+        { id: 'nested', name: 'Nested loops', status: 'gap' },
+        { id: 'lists', name: 'Lists', status: 'next' },
+      ]}
+    />
   )
 }
