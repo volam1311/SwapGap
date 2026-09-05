@@ -81,6 +81,45 @@ const ICONS = {
   dot: <circle cx="12" cy="12" r="3.4" fill="currentColor" stroke="none" />,
   undo: <path d="M8 8H4.5v3.5M4.8 10.8A7 7 0 1 1 6 17" />,
   redo: <path d="M16 8h3.5v3.5M19.2 10.8A7 7 0 1 0 18 17" />,
+  certificate: (
+    <>
+      <circle cx="12" cy="9" r="5.2" />
+      <path d="M9.2 13.4 8 20l4-2.2L16 20l-1.2-6.6" />
+    </>
+  ),
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6.1 6.1l1.6 1.6M16.3 16.3l1.6 1.6M17.9 6.1l-1.6 1.6M7.7 16.3l-1.6 1.6" />
+    </>
+  ),
+  help: (
+    <>
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M9.6 9.4a2.4 2.4 0 1 1 3.6 2.1c-.7.4-1.2 1-1.2 1.8V14" />
+      <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  menu: (
+    <>
+      <path d="M5 7h14" />
+      <path d="M5 12h14" />
+      <path d="M5 17h14" />
+    </>
+  ),
+  close: (
+    <>
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h7A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 10 18.5V17" />
+      <path d="M4 12h10" />
+      <path d="M11 8.5 14.5 12 11 15.5" />
+    </>
+  ),
 }
 
 export function Icon({ name, size = 18, stroke }) {
@@ -108,11 +147,11 @@ export function StatusGlyph({ status, size = 18 }) {
   return <Icon name={name} size={size} />
 }
 
-export function Brand({ to = '/' }) {
-  const img = <img src={logo} alt="GapSwap" className="brand-logo" />
-  if (!to) return <div className="brand">{img}</div>
+export function Brand({ to = '/', className, logoClassName }) {
+  const img = <img src={logo} alt="GapSwap" className={logoClassName || 'brand-logo'} />
+  if (!to) return <div className={className || 'brand'}>{img}</div>
   return (
-    <Link to={to} className="brand">
+    <Link to={to} className={className || 'brand'}>
       {img}
     </Link>
   )
@@ -126,7 +165,7 @@ export function Avatar({ name, color, size = 34 }) {
   )
 }
 
-export function TopBar() {
+export function TopBar({ menuOpen = false, onMenuToggle }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -149,19 +188,46 @@ export function TopBar() {
     return () => clearInterval(t)
   }, [])
 
+  useEffect(() => {
+    setOpen(false)
+  }, [menuOpen])
+
   async function markAll() {
     await api('/api/notifications/read', { method: 'POST', body: {} })
     setNotes((n) => ({ ...n, unread: 0, notifications: n.notifications.map((x) => ({ ...x, read: true })) }))
   }
 
   return (
-    <header className="topbar">
-      <button className="bell" onClick={() => setOpen((v) => !v)} aria-label="Notifications">
+    <header className="sticky top-0 z-50 flex min-h-14 items-center gap-1.5 border-b border-line bg-white/80 px-3 py-2 backdrop-blur-md print:hidden nav:justify-end nav:gap-2 nav:px-6 max-nav:pl-[max(0.75rem,env(safe-area-inset-left))] max-nav:pr-[max(0.75rem,env(safe-area-inset-right))]">
+      {onMenuToggle && (
+        <button
+          className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-lg border border-line bg-white text-navy-2 nav:hidden"
+          type="button"
+          onClick={onMenuToggle}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+        >
+          <Icon name={menuOpen ? 'close' : 'menu'} size={20} />
+        </button>
+      )}
+      <Brand
+        to="/home"
+        className="flex max-w-[132px] leading-none no-underline nav:hidden"
+        logoClassName="block h-8 w-auto object-contain"
+      />
+      <div className="min-w-0 flex-1" />
+      <button
+        className="relative grid size-9 shrink-0 cursor-pointer place-items-center rounded-md border border-line bg-white text-navy-2 transition-colors hover:bg-paper max-nav:size-10 max-nav:rounded-lg"
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Notifications"
+      >
         <Icon name="bell" size={18} />
-        {notes.unread > 0 && <span className="dot" />}
+        {notes.unread > 0 && <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-[#d64545]" />}
       </button>
       {open && (
-        <div className="notif-pop">
+        <div className="absolute top-14 right-3 left-3 z-20 overflow-hidden rounded-lg border border-line bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] nav:top-[52px] nav:right-6 nav:left-auto nav:w-[340px]">
           <div className="row pad" style={{ justifyContent: 'space-between' }}>
             <b>Notifications</b>
             <button className="btn btn-ghost" onClick={markAll}>
@@ -170,18 +236,23 @@ export function TopBar() {
           </div>
           {notes.notifications.length === 0 && <div className="pad">You are all caught up.</div>}
           {notes.notifications.map((n) => (
-            <Link key={n.id} to={n.link || '/home'} className={`notif-item${n.read ? '' : ' unread'}`} onClick={() => setOpen(false)}>
+            <Link
+              key={n.id}
+              to={n.link || '/home'}
+              className={`block border-b border-line px-3.5 py-3 no-underline hover:bg-paper${n.read ? '' : ' bg-[#f6f9ff]'}`}
+              onClick={() => setOpen(false)}
+            >
               <b>{n.title}</b>
-              <small>{n.body}</small>
+              <small className="mt-0 block text-muted">{n.body}</small>
             </Link>
           ))}
         </div>
       )}
-      <Link to="/profile" className="who" style={{ textDecoration: 'none' }}>
+      <Link to="/profile" className="flex items-center gap-2 text-sm font-medium text-ink no-underline">
         <Avatar name={user?.name} color={user?.avatarColor} />
-        {user?.name}
+        <span className="hidden nav:inline">{user?.name}</span>
       </Link>
-      <button className="btn btn-ghost" type="button" onClick={goToLogin}>
+      <button className="btn btn-ghost hidden! nav:inline-flex!" type="button" onClick={goToLogin}>
         Log out
       </button>
     </header>
