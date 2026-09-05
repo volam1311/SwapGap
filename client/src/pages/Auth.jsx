@@ -24,11 +24,11 @@ export function Login() {
     }
   }
 
-  async function onDemo() {
+  async function onDemo(as) {
     setError('')
     setBusy(true)
     try {
-      await demo()
+      await demo(as)
       navigate('/home')
     } catch (err) {
       setError(err.message)
@@ -44,7 +44,9 @@ export function Login() {
           GapSwap
         </Link>
         <h1>Welcome back</h1>
-        <p style={{ color: '#5b6b7f' }}>Use your university email, or continue as Maya for the demo.</p>
+        <p style={{ color: '#5b6b7f' }}>
+          Use your university email, or open the Maya ↔ Alex session demo.
+        </p>
         {error && <div className="error">{error}</div>}
         <label className="field">
           <span>Email</span>
@@ -73,8 +75,11 @@ export function Login() {
         <button className="btn btn-primary btn-lg" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Log in'}
         </button>
-        <button className="btn btn-secondary btn-lg" type="button" onClick={onDemo} disabled={busy}>
+        <button className="btn btn-secondary btn-lg" type="button" onClick={() => onDemo('maya')} disabled={busy}>
           Continue as Maya (demo)
+        </button>
+        <button className="btn btn-secondary btn-lg" type="button" onClick={() => onDemo('alex')} disabled={busy}>
+          Continue as Alex (Maya’s session partner)
         </button>
         <p>
           New here? <Link to="/signup">Create an account</Link>

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { db, meUser, nowIso } from '../db.js'
 import { signToken } from '../middleware/auth.js'
+import { ensureDemoPair } from '../seed.js'
 
 function isUniEmail(email) {
   return /\.edu(\.[a-z]{2})?$/i.test(email) || /@(qut|uq|monash|unimelb|unsw|usyd|anu)\./i.test(email)
@@ -54,8 +55,11 @@ export function authRoutes(app) {
     res.json({ token: signToken(row.id), user: meUser(row) })
   })
 
-  app.post('/api/auth/demo', (_req, res) => {
-    const row = db.prepare('SELECT * FROM users WHERE id = ?').get('maya')
+  app.post('/api/auth/demo', (req, res) => {
+    ensureDemoPair()
+    const as = String(req.body?.as || 'maya').toLowerCase()
+    const id = as === 'alex' ? 'alex' : 'maya'
+    const row = db.prepare('SELECT * FROM users WHERE id = ?').get(id)
     if (!row) return res.status(500).json({ error: 'Demo user missing — run npm run seed' })
     res.json({ token: signToken(row.id), user: meUser(row) })
   })

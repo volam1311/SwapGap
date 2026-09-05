@@ -33,7 +33,7 @@ export function Landing() {
               Create a student profile
             </Link>
             <Link className="btn btn-secondary" to="/login">
-              Demo as Maya
+              Demo Maya / Alex
             </Link>
           </div>
           <div className="loop">

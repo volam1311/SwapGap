@@ -1,6 +1,6 @@
 import { db, parseJson } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
-import { inferConcept, listConcepts } from '../services/concepts.js'
+import { conceptById, diagnosisFromEvidence, inferConcept, listConcepts } from '../services/concepts.js'
 
 function shapeNode(c) {
   return {
@@ -92,7 +92,7 @@ export function gpsRoutes(app) {
       )
       .get(req.user.id)
 
-    const diagnosis = latest ? parseJson(latest.result, null) : null
+    const stored = latest ? parseJson(latest.result, null) : null
     const latestQuestion = db
       .prepare(
         `
@@ -103,8 +103,8 @@ export function gpsRoutes(app) {
       .get(req.user.id)
 
     const focus =
-      diagnosis?.gap?.conceptId ||
-      inferConcept(diagnosis?.gap?.concept)?.id ||
+      stored?.gap?.conceptId ||
+      inferConcept(stored?.gap?.concept)?.id ||
       inferConcept(latestQuestion?.concept, latestQuestion?.title, latestQuestion?.body)?.id
     const path = buildPath(req.user.id, focus)
     const mapped = path.some((c) => c.status && c.status !== 'unmapped' && c.status !== 'next')
@@ -113,7 +113,12 @@ export function gpsRoutes(app) {
       path.find((c) => c.status === 'gap') ||
       path.find((c) => c.status === 'developing')
     const next = path.find((c) => c.status === 'next') || path.find((c) => c.status === 'unmapped')
-    const origin = diagnosis ? 'diagnostic' : latestQuestion ? 'question' : null
+    const diagnosis =
+      stored ||
+      (current?.id && !String(current.id).startsWith('q-')
+        ? diagnosisFromEvidence({ concept: conceptById(current.id) })
+        : null)
+    const origin = stored ? 'diagnostic' : latestQuestion ? 'question' : diagnosis ? 'mapped' : null
 
     res.json({
       path,
