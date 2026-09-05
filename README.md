@@ -1,4 +1,4 @@
-# GapSwap
+# SwapGap
 
 AI-powered triage: diagnose the misconception, map it on a Learning GPS, route a scripted peer check, then verify — or escalate to Student Success.
 
