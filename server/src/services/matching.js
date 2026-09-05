@@ -18,6 +18,23 @@ function overlap(a, b) {
   return bs.filter((id) => as.has(id))
 }
 
+const DEMO_TRUST = {
+  alex: { sessionsOnConcept: 14, passRate: 86, onTimeRate: 100 },
+  priya: { sessionsOnConcept: 9, passRate: 81, onTimeRate: 96 },
+  jordan: { sessionsOnConcept: 6, passRate: 74, onTimeRate: 92 },
+  sam: { sessionsOnConcept: 4, passRate: 70, onTimeRate: 88 },
+  maya: { sessionsOnConcept: 8, passRate: 83, onTimeRate: 98 },
+}
+
+function trustStats(userId, theyMasterGap) {
+  const t = DEMO_TRUST[userId] || { sessionsOnConcept: 3, passRate: 72, onTimeRate: 90 }
+  return {
+    sessionsOnConcept: theyMasterGap ? t.sessionsOnConcept : 0,
+    passRate: theyMasterGap ? t.passRate : null,
+    onTimeRate: t.onTimeRate,
+  }
+}
+
 export function rankMatches(me, mode = 'swap') {
   const blocked = new Set(
     db
@@ -56,14 +73,14 @@ export function rankMatches(me, mode = 'swap') {
     let score = 23
     if (theyMasterGap) {
       score += 28
-      reasons.push(`Strong in ${myGap.name}`)
+      reasons.push(`Verified on ${myGap.name}`)
     }
     if (reciprocalGap && (mode === 'swap' || mode === 'help')) {
       score += 18
-      reasons.push(`Learning ${myTeach.name}`)
+      reasons.push(`Needs a check on ${myTeach.name}`)
     } else if (theyNeedMine && (mode === 'swap' || mode === 'help')) {
       score += 12
-      reasons.push(`Learning ${myTeach.name}`)
+      reasons.push(`Needs a check on ${myTeach.name}`)
     }
     if (sameCourse) {
       score += 10
@@ -71,7 +88,7 @@ export function rankMatches(me, mode = 'swap') {
     }
     if (theyMasterGap && theirs[myGap.concept_id]?.verified) {
       score += 6
-      reasons.push('Verified by diagnostic')
+      reasons.push('Passed transfer check')
     }
     if (sharedSlots.length) score += 4
     if (styleFit) score += 3
@@ -79,6 +96,7 @@ export function rankMatches(me, mode = 'swap') {
     score = Math.min(99, score)
 
     const theirGap = Object.values(theirs).find((c) => c.status === 'gap')
+    const trust = trustStats(them.id, theyMasterGap)
 
     return {
       userId: them.id,
@@ -98,6 +116,9 @@ export function rankMatches(me, mode = 'swap') {
       reciprocal: Boolean(theyMasterGap && reciprocalGap),
       sharedSlots: DEMO_SLOTS().filter((s) => sharedSlots.includes(s.id)),
       verified: Boolean(theyMasterGap && theirs[myGap.concept_id]?.verified),
+      sessionsOnConcept: trust.sessionsOnConcept,
+      passRate: trust.passRate,
+      onTimeRate: trust.onTimeRate,
       modeHint: theyMasterGap && theyNeedMine ? 'swap' : theyMasterGap ? 'help' : 'group',
     }
   })
@@ -120,7 +141,7 @@ export function rankMatches(me, mode = 'swap') {
 export function defaultAgenda(youName, partnerName, youTeach, theyTeach, duration = 20) {
   const half = Math.max(5, Math.floor(duration / 2))
   return [
-    { minutes: half, title: `${youName} teaches ${youTeach}`, owner: youName },
-    { minutes: duration - half, title: `${partnerName} teaches ${theyTeach}`, owner: partnerName },
+    { minutes: half, title: `${youName} facilitates a scripted check on ${youTeach}`, owner: youName },
+    { minutes: duration - half, title: `${partnerName} facilitates a scripted check on ${theyTeach}`, owner: partnerName },
   ]
 }

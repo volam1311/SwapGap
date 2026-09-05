@@ -32,7 +32,7 @@ export function Home() {
         </h1>
         <p className="page-sub">
           {uni}
-          {courseLabel ? ` · ${courseLabel}` : ''} · verified .edu.au peer learning
+          {courseLabel ? ` · ${courseLabel}` : ''} · verified .edu.au peer checks
         </p>
       </div>
       <div className="metric-strip">
@@ -45,7 +45,7 @@ export function Home() {
           <strong>{data.counts?.gap ?? 0}</strong>
         </div>
         <div className="card metric">
-          <small>Verified swaps</small>
+          <small>Verified checks</small>
           <strong>{data.stats.sessionsCompleted}</strong>
         </div>
         <div className="card metric">
@@ -58,8 +58,8 @@ export function Home() {
           <div className="hero-icon">◎</div>
           <h2>Find your next knowledge gap</h2>
           <p className="muted" style={{ margin: '-6px 0 14px' }}>
-            Tutors cannot sit with every first-year student. Diagnose why you are stuck, then swap with a peer
-            in the same unit.
+            Tutors cannot sit with every first-year student. Diagnose why you are stuck, then run a scripted
+            check with a peer in the same unit.
           </p>
           <div className="row">
             <Link className="btn btn-primary" to="/discover">
@@ -96,9 +96,9 @@ export function Home() {
           <h3>Recommended next action</h3>
           <p className="muted" style={{ margin: '8px 0 12px' }}>
             {gapNode
-              ? `${gapNode.name} is on your GPS. Diagnose it if you have not, swap with a peer, then prove the gap closed.`
+              ? `${gapNode.name} is on your GPS. Diagnose it if you have not, run a scripted peer check, then prove the gap closed.`
               : hasGap
-                ? 'You have an open gap. Open Learning GPS to see it, then swap with a peer and prove it closed.'
+                ? 'You have an open gap. Open Learning GPS to see it, then run a scripted check and prove it closed.'
                 : 'Start a diagnostic or ask a question to place your first gap on the Learning GPS.'}
           </p>
           <div className="row">
@@ -111,7 +111,7 @@ export function Home() {
           </div>
         </div>
         <div className="card pad">
-          <h3>Skills you can teach</h3>
+          <h3>Concepts you can facilitate</h3>
           {(data.teachable || []).length ? (
             <div className="tags" style={{ marginTop: 10 }}>
               {data.teachable.map((t) => (
@@ -122,7 +122,8 @@ export function Home() {
             </div>
           ) : (
             <p className="muted" style={{ marginTop: 10 }}>
-              None yet. After a diagnostic, GapSwap will ask if you are willing to teach a verified strength.
+              None yet. After a diagnostic, GapSwap will ask if you are willing to run a scripted check on a
+              verified strength.
             </p>
           )}
           <p className="muted" style={{ marginTop: 12 }}>
@@ -135,7 +136,7 @@ export function Home() {
         <p className="muted">
           {data.certificate?.eligible
             ? `${data.certificate.title} for ${data.certificate.term} is ready. Add it to LinkedIn or copy a CV bullet.`
-            : 'Teach a topic you already understand, or answer on the board, to earn a Peer Teaching & Support certificate for this semester.'}
+            : 'Facilitate a scripted check on a topic you already understand to earn a Peer Teaching & Support certificate for this semester.'}
         </p>
         <Link className="btn btn-secondary" to="/certificate" style={{ alignSelf: 'start' }}>
           {data.certificate?.eligible ? 'Open certificate' : 'Employability certificate'}

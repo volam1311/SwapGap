@@ -29,7 +29,7 @@ export function CertificateMark({ cert }) {
       <p className="cert-awarded">This is to recognise</p>
       <p className="cert-name">{cert.holder.name}</p>
       <p>
-        for verified peer teaching and support in <b>{cert.holder.course || 'their unit'}</b> during{' '}
+        for verified peer support in <b>{cert.holder.course || 'their unit'}</b> during{' '}
         {cert.term.teachingPeriod}.
       </p>
       <div className="tags" style={{ marginTop: 14, justifyContent: 'center' }}>
@@ -41,7 +41,7 @@ export function CertificateMark({ cert }) {
       </div>
       <div className="cert-meta">
         <div>
-          <small>Teaching swaps</small>
+          <small>Scripted checks</small>
           <b>{cert.stats.sessionsTaught}</b>
         </div>
         <div>
@@ -88,11 +88,11 @@ export function Certificate() {
           <h3>How to unlock it</h3>
           <label className="choice">
             <input type="checkbox" checked={cert.progress.teachASwap} readOnly />
-            Teach in a GapSwap (you explain a topic you already understand)
+            Facilitate a scripted GapSwap (you run the pack for a topic you already understand)
           </label>
           <label className="choice">
             <input type="checkbox" checked={cert.progress.getARating} readOnly />
-            Receive a peer rating after a session
+            A learner you supported passes the transfer check
           </label>
           <label className="choice">
             <input type="checkbox" checked={cert.progress.supportOnBoard} readOnly />
@@ -100,7 +100,7 @@ export function Certificate() {
           </label>
           <div className="row">
             <Link className="btn btn-primary" to="/match">
-              Find a match to teach
+              Find a match to facilitate
             </Link>
             <Link className="btn btn-secondary" to="/questions">
               Answer a question
@@ -115,7 +115,7 @@ export function Certificate() {
     <div className="page stack">
       <h1 className="page-title">Semester credential</h1>
       <p className="page-sub">
-        Issued for {cert.term.label}. Use this on a CV or LinkedIn as evidence of peer teaching — not as a
+        Issued for {cert.term.label}. Use this on a CV or LinkedIn as evidence of verified peer support — not as a
         university award.
       </p>
       <CertificateMark cert={cert} />

@@ -74,10 +74,10 @@ export function buildCertificate(userId) {
   const title = 'Peer Teaching & Support Certificate'
   const topics = taughtTopics.length ? taughtTopics : teachable
   const cvBullet = eligible
-    ? `${title}, ${term.label}, GapSwap at ${row.university || 'QUT'}. Supported peers in ${courseLabel} (${topics.join(', ') || 'core concepts'}) across ${Math.max(taught.length, supported, ratings.length)} verified knowledge-swap${Math.max(taught.length, supported, ratings.length) === 1 ? '' : 's'}${ratings.length ? `, average helpfulness ${avg(ratings.map((r) => r.helpfulness))}/5` : ''}.`
+    ? `${title}, ${term.label}, GapSwap at ${row.university || 'QUT'}. Supported peers in ${courseLabel} (${topics.join(', ') || 'core concepts'}) across ${Math.max(taught.length, supported, ratings.length)} verified scripted check${Math.max(taught.length, supported, ratings.length) === 1 ? '' : 's'}.`
     : null
   const linkedinText = eligible
-    ? `${title} — ${courseLabel}\nIssued by GapSwap (${row.university || 'QUT'} peer learning) · ${term.issueMonthLabel}\nCredential ID: ${id}\nTaught: ${topics.join(', ') || 'peer learning support'}`
+    ? `${title} — ${courseLabel}\nIssued by GapSwap (${row.university || 'QUT'} peer support) · ${term.issueMonthLabel}\nCredential ID: ${id}\nFacilitated: ${topics.join(', ') || 'peer learning support'}`
     : null
 
   return {

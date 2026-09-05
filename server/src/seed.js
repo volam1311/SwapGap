@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { fileURLToPath } from 'node:url'
 import { db, nowIso } from './db.js'
-import { FALLBACK_DIAGNOSIS } from './services/fallback.js'
+import { FALLBACK_DIAGNOSIS, sessionWorkspace } from './services/fallback.js'
 
 const CONCEPTS = [
   { id: 'variables', name: 'Variables', order: 1, gps: 1, prereq: null },
@@ -284,10 +284,10 @@ export async function seed() {
   `).run({
     id: 'match-maya-alex',
     reasons: JSON.stringify([
-      'Strong in Nested loops',
-      'Learning Functions',
+      'Verified on Nested loops',
+      'Needs a check on Functions',
       'Same course',
-      'Verified by diagnostic',
+      'Passed transfer check',
     ]),
     created_at: created,
   })
@@ -307,21 +307,10 @@ export async function seed() {
     starts_at: slot(0, 18, 0),
     meeting_url: `https://meet.jit.si/GapSwap-${sessionId}`,
     agenda: JSON.stringify([
-      { minutes: 10, title: 'Maya teaches Functions', owner: 'Maya' },
-      { minutes: 10, title: 'Alex teaches Nested loops', owner: 'Alex T.' },
+      { minutes: 10, title: 'Maya facilitates a scripted check on Functions', owner: 'Maya' },
+      { minutes: 10, title: 'Alex T. facilitates a scripted check on Nested loops', owner: 'Alex T.' },
     ]),
-    workspace: JSON.stringify({
-      code: 'for i in range(2):\n    for j in range(3):\n        print(i, j)',
-      annotation: 'inner loop restarts here',
-      trace: [
-        { i: 0, j: 0, out: '0 0' },
-        { i: 0, j: 1, out: '0 1' },
-        { i: 0, j: 2, out: '0 2' },
-        { i: 1, j: 0, out: '1 0' },
-        { i: 1, j: 1, out: '1 1' },
-        { i: 1, j: 2, out: '1 2' },
-      ],
-    }),
+    workspace: JSON.stringify(sessionWorkspace('Nested loops', 'Functions')),
     created_at: created,
   })
 
@@ -341,9 +330,9 @@ export async function seed() {
     INSERT INTO notifications (id, user_id, type, title, body, link, read, created_at)
     VALUES
       ('n1', 'maya', 'session', 'GapSwap with Alex today', 'Online room at 6:00 pm — Nested loops ↔ Functions.', '/sessions/session-maya-alex', 0, @created_at),
-      ('n2', 'maya', 'match', 'Alex T. is a 94% match', 'They can teach Nested loops and want help with Functions.', '/match', 0, @created_at),
+      ('n2', 'maya', 'match', 'Alex T. is a 94% match', 'They can facilitate Nested loops and need a check on Functions.', '/match', 0, @created_at),
       ('n3', 'maya', 'board', 'New reply on the questions board', 'Your explanation on return values was marked helpful.', '/questions', 1, @created_at),
-      ('n-alex', 'alex', 'session', 'GapSwap with Maya today', 'Online room at 6:00 pm — you teach Nested loops, Maya teaches Functions.', '/sessions/session-maya-alex', 0, @created_at)
+      ('n-alex', 'alex', 'session', 'GapSwap with Maya today', 'Online room at 6:00 pm — you facilitate Nested loops, Maya facilitates Functions.', '/sessions/session-maya-alex', 0, @created_at)
   `).run({ created_at: created })
 
   insertDemoDiagnostics(created)
@@ -570,10 +559,10 @@ export function ensureDemoPair() {
   `).run({
     id: 'match-maya-alex',
     reasons: JSON.stringify([
-      'Strong in Nested loops',
-      'Learning Functions',
+      'Verified on Nested loops',
+      'Needs a check on Functions',
       'Same course',
-      'Verified by diagnostic',
+      'Passed transfer check',
     ]),
     created_at: created,
   })
@@ -594,21 +583,10 @@ export function ensureDemoPair() {
     starts_at: slot(0, 18, 0),
     meeting_url: `https://meet.jit.si/GapSwap-${sessionId}`,
     agenda: JSON.stringify([
-      { minutes: 10, title: 'Maya teaches Functions', owner: 'Maya' },
-      { minutes: 10, title: 'Alex teaches Nested loops', owner: 'Alex T.' },
+      { minutes: 10, title: 'Maya facilitates a scripted check on Functions', owner: 'Maya' },
+      { minutes: 10, title: 'Alex T. facilitates a scripted check on Nested loops', owner: 'Alex T.' },
     ]),
-    workspace: JSON.stringify({
-      code: 'for i in range(2):\n    for j in range(3):\n        print(i, j)',
-      annotation: 'inner loop restarts here',
-      trace: [
-        { i: 0, j: 0, out: '0 0' },
-        { i: 0, j: 1, out: '0 1' },
-        { i: 0, j: 2, out: '0 2' },
-        { i: 1, j: 0, out: '1 0' },
-        { i: 1, j: 1, out: '1 1' },
-        { i: 1, j: 2, out: '1 2' },
-      ],
-    }),
+    workspace: JSON.stringify(sessionWorkspace('Nested loops', 'Functions')),
     created_at: created,
   })
 
@@ -619,8 +597,8 @@ export function ensureDemoPair() {
     INSERT INTO notifications (id, user_id, type, title, body, link, read, created_at)
     VALUES
       ('n1', 'maya', 'session', 'GapSwap with Alex today', 'Online room at 6:00 pm — Nested loops ↔ Functions.', '/sessions/session-maya-alex', 0, @created_at),
-      ('n2', 'maya', 'match', 'Alex T. is a 94% match', 'They can teach Nested loops and want help with Functions.', '/match', 0, @created_at),
-      ('n-alex', 'alex', 'session', 'GapSwap with Maya today', 'Online room at 6:00 pm — you teach Nested loops, Maya teaches Functions.', '/sessions/session-maya-alex', 0, @created_at)
+      ('n2', 'maya', 'match', 'Alex T. is a 94% match', 'They can facilitate Nested loops and need a check on Functions.', '/match', 0, @created_at),
+      ('n-alex', 'alex', 'session', 'GapSwap with Maya today', 'Online room at 6:00 pm — you facilitate Nested loops, Maya facilitates Functions.', '/sessions/session-maya-alex', 0, @created_at)
   `).run({ created_at: created })
 
   return { ok: true }

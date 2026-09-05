@@ -70,7 +70,7 @@ export function Diagnose() {
     return (
       <div className="page stack">
         <h1 className="page-title">Here’s what we found</h1>
-        <p className="page-sub">The diagnostic evaluated your answers. You choose what you are willing to teach.</p>
+        <p className="page-sub">The diagnostic evaluated your answers. You choose which strengths you are willing to facilitate.</p>
         <div className="gap-banner">
           <h3>Gap: {gap}</h3>
           <p style={{ marginTop: 8 }}>{diagnosis.gap?.misconception}</p>
@@ -78,15 +78,15 @@ export function Diagnose() {
         <div className="card pad stack">
           <h3>Strengths we can see</h3>
           <p className="muted">
-            These showed up as solid in this check. Tick any you are willing to teach a peer.
+            These showed up as solid in this check. Tick any you are willing to facilitate for a peer.
           </p>
-          {offers.length === 0 && <p>No verified teaching topics yet — keep practising and we’ll ask again.</p>}
+          {offers.length === 0 && <p>No verified facilitation topics yet — keep practising and we’ll ask again.</p>}
           {offers.map((o) => (
             <label key={o.id} className={`choice${willing.includes(o.name) ? ' active' : ''}`}>
               <input type="checkbox" checked={willing.includes(o.name)} onChange={() => toggle(o.name)} />
               <span>
                 <b>{o.name}</b>
-                <span> Willing to teach this after the diagnostic</span>
+                <span> Willing to run a scripted check on this</span>
               </span>
             </label>
           ))}

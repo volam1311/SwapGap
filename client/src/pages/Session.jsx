@@ -49,6 +49,20 @@ export function SessionPage() {
   }} />
 }
 
+function packFor(session, concept) {
+  const ws = session.workspace || {}
+  return ws.packs?.[concept] || ws.pack || {
+    concept,
+    source: 'Course-approved session pack',
+    prompts: [],
+    exercise: '',
+    facilitatorJob: [],
+    code: ws.code,
+    annotation: ws.annotation,
+    trace: ws.trace,
+  }
+}
+
 function SessionConfirm({ session, onJoin, onCancel }) {
   const when = new Date(session.startsAt)
   const end = new Date(when.getTime() + session.durationMin * 60000)
@@ -79,12 +93,12 @@ function SessionConfirm({ session, onJoin, onCancel }) {
           <div className="row" style={{ justifyContent: 'center', margin: '12px 0' }}>
             <div style={{ textAlign: 'center' }}>
               <Avatar name={session.you.name} color={session.you.color} size={64} />
-              <p>You teach {session.teachConcept}</p>
+              <p>You facilitate {session.youFacilitateConcept}</p>
             </div>
             <div className="arrow">↔</div>
             <div style={{ textAlign: 'center' }}>
               <Avatar name={session.peer.name} color={session.peer.color} size={64} />
-              <p>They teach {session.gapConcept}</p>
+              <p>They facilitate {session.peerFacilitateConcept}</p>
             </div>
           </div>
           <h3>Preparation</h3>
@@ -148,7 +162,13 @@ function SessionRoom({ session, setSession }) {
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0')
   const ss = String(seconds % 60).padStart(2, '0')
-  const ws = session.workspace || {}
+  const hostFacilitating = phase === 'a_teaches'
+  const youFacilitate = session.youAreHost ? hostFacilitating : !hostFacilitating
+  const currentConcept = youFacilitate ? session.youFacilitateConcept : session.peerFacilitateConcept
+  const pack = packFor(session, currentConcept)
+  const code = pack.code || session.workspace?.code || ''
+  const annotation = pack.annotation || session.workspace?.annotation
+  const trace = pack.trace?.length ? pack.trace : session.workspace?.trace
 
   async function askHint() {
     const res = await api(`/api/sessions/${session.id}/assistant`, {
@@ -176,7 +196,7 @@ function SessionRoom({ session, setSession }) {
     <div className="page stack">
       <div className="row" style={{ justifyContent: 'space-between' }}>
         <h1 className="page-title" style={{ margin: 0 }}>
-          Live Knowledge Swap
+          Scripted check
         </h1>
         <div className="row">
           <b>{mm}:{ss}</b>
@@ -194,20 +214,23 @@ function SessionRoom({ session, setSession }) {
             <div className="video-tile">
               <video ref={videoRef} autoPlay muted playsInline />
               <span className="label">
-                {session.you.name} · {phase === 'a_teaches' ? 'Teaching' : 'Learning'}
+                {session.you.name} · {youFacilitate ? 'Facilitating' : 'Explaining back'}
               </span>
             </div>
             <div className="video-tile">
               <Avatar name={session.peer.name} color={session.peer.color} size={56} />
               <span className="label">
-                {session.peer.name} · {phase === 'b_teaches' ? 'Teaching' : 'Learning'}
+                {session.peer.name} · {youFacilitate ? 'Explaining back' : 'Facilitating'}
               </span>
             </div>
           </div>
           <div className="card pad workspace">
-            <pre className="code-block">{ws.code}</pre>
-            <div className="anno">{ws.annotation}</div>
-            {ws.trace && (
+            <p className="muted" style={{ marginBottom: 8 }}>
+              {pack.source || 'Course-approved session pack'}
+            </p>
+            {code ? <pre className="code-block">{code}</pre> : <p className="muted">Worked example loads with the pack.</p>}
+            {annotation && <div className="anno">{annotation}</div>}
+            {trace?.length > 0 && (
               <table className="trace">
                 <thead>
                   <tr>
@@ -217,7 +240,7 @@ function SessionRoom({ session, setSession }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {ws.trace.map((r, i) => (
+                  {trace.map((r, i) => (
                     <tr key={i}>
                       <td>{r.i}</td>
                       <td>{r.j}</td>
@@ -233,20 +256,33 @@ function SessionRoom({ session, setSession }) {
         <div className="stack">
           <div className="card pad stack">
             <p>
-              <b>Part {phase === 'a_teaches' ? '1' : '2'} of 2</b> —{' '}
-              {phase === 'a_teaches' ? `${session.you.name} teaches ${session.teachConcept}` : `${session.peer.name} teaches ${session.gapConcept}`}
+              <b>Part {youFacilitate ? '1' : '2'} of 2</b> —{' '}
+              {youFacilitate
+                ? `${session.you.name} facilitates ${session.youFacilitateConcept}`
+                : `${session.peer.name} facilitates ${session.peerFacilitateConcept}`}
             </p>
-            <p>Explain · <b>Example</b> · Check</p>
-            <p>
-              <b>Show why the inner loop restarts.</b>
-            </p>
+            <p className="muted">Peers do not draft the lesson. Run this pack, then verify.</p>
+            <ol className="pack-steps">
+              {(pack.prompts || []).map((q) => (
+                <li key={q}>{q}</li>
+              ))}
+            </ol>
+            {pack.exercise && (
+              <p>
+                <b>Exercise.</b> {pack.exercise}
+              </p>
+            )}
+            {(pack.facilitatorJob || []).length > 0 && (
+              <ul className="safety">
+                {pack.facilitatorJob.map((job) => (
+                  <li key={job}>{job}</li>
+                ))}
+              </ul>
+            )}
             {hint && <p>{hint}</p>}
             <button className="btn btn-secondary" onClick={askHint}>
               Ask for a hint
             </button>
-            <a className="btn btn-secondary" href="https://pythontutor.com/" target="_blank" rel="noreferrer">
-              Share a resource
-            </a>
             <button className="btn btn-secondary" onClick={switchRoles}>
               Switch roles
             </button>

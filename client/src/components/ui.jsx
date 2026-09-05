@@ -123,9 +123,9 @@ export function SafetyNote() {
       <h3>Safety and oversight</h3>
       <ul className="safety">
         <li>Same-course matching · verified .edu.au where possible</li>
-        <li>AI diagnoses; a human peer teaches</li>
+        <li>AI diagnoses; the pack explains; a peer checks understanding</li>
         <li>Report, leave, or hide contact anytime</li>
-        <li>No grades shared · not official academic advice</li>
+        <li>Failed checks escalate to Student Success — we do not replace tutors</li>
       </ul>
     </div>
   )

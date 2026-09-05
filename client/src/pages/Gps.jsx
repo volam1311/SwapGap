@@ -26,7 +26,7 @@ export function Gps() {
       <h1 className="page-title">Your route to mastery</h1>
       <p className="page-sub">
         {data.mapped
-          ? 'Success is this node turning green after a verified swap — not a session booked.'
+          ? 'Success is this node turning green after a verified check — not a session booked.'
           : 'This fills in when you diagnose a misconception or ask a question.'}
       </p>
       <div className="card pad">
@@ -74,6 +74,27 @@ export function Gps() {
               ))}
             </ul>
           </div>
+          <div className="card pad stack">
+            <h3>Cheapest sufficient support</h3>
+            <p className="muted">
+              Peers are not the source of knowledge. Content is system-provided; we route to the lowest tier
+              that is still enough.
+            </p>
+            <div className="tier-list">
+              <div>
+                <b>1 · Self-study pack</b>
+                <p className="muted">Approved worked example and practice for {gap.concept}.</p>
+              </div>
+              <div>
+                <b>2 · Scripted peer check</b>
+                <p className="muted">A classmate runs the pack and listens while you explain it back.</p>
+              </div>
+              <div>
+                <b>3 · Student Success</b>
+                <p className="muted">If the transfer check fails, escalate with this diagnostic profile.</p>
+              </div>
+            </div>
+          </div>
           <div className="row">
             <button className="btn btn-secondary" onClick={socratic}>
               Guided challenge
@@ -82,7 +103,7 @@ export function Gps() {
               Review example
             </a>
             <Link className="btn btn-secondary" to="/match">
-              Learn with a peer
+              Scripted peer check
             </Link>
           </div>
           {lesson && (
