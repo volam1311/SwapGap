@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../AuthContext.jsx'
 
@@ -21,15 +21,15 @@ export function Onboarding() {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     name: looksGenerated(user) ? '' : user?.name || '',
-    university: user?.university || 'QUT',
-    courseCode: user?.courseCode || 'IFB104',
-    course: user?.course || 'Building IT Systems',
+    university: user?.university || '',
     learningStyle: user?.learningStyle || 'examples',
     preference: user?.preference || 'online',
-    availability: ['today-18', 'tomorrow-14'],
+    availability: user?.availability?.length ? user.availability : ['today-18', 'tomorrow-14'],
   })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+
+  if (user?.onboarded) return <Navigate to="/home" replace />
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -44,15 +44,11 @@ export function Onboarding() {
     setError('')
     setBusy(true)
     try {
-      const subject = [form.courseCode.trim(), form.course.trim()].filter(Boolean).join(' — ')
       await api('/api/me', {
         method: 'PATCH',
         body: {
           name: form.name.trim(),
           university: form.university.trim(),
-          courseCode: form.courseCode.trim(),
-          course: form.course.trim(),
-          subjects: subject ? [subject] : [],
           learningStyle: form.learningStyle,
           preference: form.preference,
           availability: form.availability,
@@ -71,10 +67,9 @@ export function Onboarding() {
   return (
     <div className="auth-wrap">
       <form className="card pad auth-card stack" onSubmit={submit} style={{ width: 'min(560px, 100%)' }}>
-        <h1>Set up your learning profile</h1>
+        <h1>What should we call you?</h1>
         <p style={{ color: '#5b6b7f' }}>
-          Add your name and unit so we can match you with peers in the same course. Strengths and gaps are
-          found later, when you test your understanding.
+          Your unit is chosen later, on Discover Gaps, when you test something you are stuck on.
         </p>
         {error && <div className="error">{error}</div>}
         <label className="field">
@@ -95,24 +90,6 @@ export function Onboarding() {
             placeholder="QUT"
             value={form.university}
             onChange={(e) => set('university', e.target.value)}
-          />
-        </label>
-        <label className="field">
-          <span>Course code</span>
-          <input
-            name="courseCode"
-            placeholder="IFB104"
-            value={form.courseCode}
-            onChange={(e) => set('courseCode', e.target.value)}
-          />
-        </label>
-        <label className="field">
-          <span>Course name</span>
-          <input
-            name="course"
-            placeholder="Building IT Systems"
-            value={form.course}
-            onChange={(e) => set('course', e.target.value)}
           />
         </label>
         <label className="field">

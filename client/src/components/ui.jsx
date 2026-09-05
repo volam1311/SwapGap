@@ -88,6 +88,7 @@ export function GpsPath({ path = [] }) {
     if (status === 'mastered') return '✓'
     if (status === 'developing') return '~'
     if (status === 'gap') return '!'
+    if (status === 'unmapped') return '○'
     return '→'
   }
   return (

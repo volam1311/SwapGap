@@ -15,8 +15,8 @@ export function Login() {
     setError('')
     setBusy(true)
     try {
-      const user = await login(email, password)
-      navigate(user.onboarded ? '/home' : '/onboarding')
+      await login(email, password)
+      navigate('/home')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -28,8 +28,8 @@ export function Login() {
     setError('')
     setBusy(true)
     try {
-      const user = await demo()
-      navigate(user.onboarded ? '/home' : '/onboarding')
+      await demo()
+      navigate('/home')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -98,7 +98,7 @@ export function Signup() {
     setBusy(true)
     try {
       await register({ email, password })
-      navigate('/onboarding')
+      navigate('/home')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -114,7 +114,7 @@ export function Signup() {
         </Link>
         <h1>Create an account</h1>
         <p style={{ color: '#5b6b7f' }}>
-          Email and password first. You can add your name and course on the next screen.
+          Email and password first. Pick your unit on Discover Gaps when you test something you are stuck on.
         </p>
         {error && <div className="error">{error}</div>}
         <label className="field">

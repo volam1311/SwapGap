@@ -56,6 +56,7 @@ p { margin: 0; }
 .btn-danger { background: #fff; color: var(--red); border: 1px solid #f3c2c2; }
 .btn-lg { width: 100%; padding: 14px 18px; font-size: 16px; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.choice:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .field { display: grid; gap: 6px; position: relative; z-index: 1; }
 .field span { font-size: 13px; color: var(--muted); font-weight: 600; }
@@ -267,6 +268,7 @@ label.choice span { display: grid; gap: 2px; }
 .gps-node.developing .orb { background: var(--amber); }
 .gps-node.gap .orb { background: var(--red); }
 .gps-node.next .orb { background: #c5d0de; color: #44566c; }
+.gps-node.unmapped .orb { background: #eef2f7; color: #8a97a8; border: 2px dashed #c5d0de; }
 .gps-node small { color: var(--muted); font-weight: 700; }
 .gps-line {
   flex: 1;

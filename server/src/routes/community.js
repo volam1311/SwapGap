@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { db, nowIso } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
+import { conceptByName, inferConcept, listConcepts, markGapFromQuestion } from '../services/concepts.js'
 
 export function questionRoutes(app) {
   app.get('/api/questions', requireAuth, (req, res) => {
@@ -23,6 +24,7 @@ export function questionRoutes(app) {
       })
     }
     res.json({
+      concepts: listConcepts(),
       questions: rows.map((q) => ({
         id: q.id,
         authorName: q.author_name,
@@ -40,12 +42,15 @@ export function questionRoutes(app) {
   app.post('/api/questions', requireAuth, (req, res) => {
     const { title, body, concept } = req.body || {}
     if (!title) return res.status(400).json({ error: 'Title required' })
+    const picked = conceptByName(concept) || inferConcept(concept, title, body)
+    const conceptName = (concept && String(concept).trim()) || picked?.name || ''
     const id = randomUUID()
     db.prepare(`
       INSERT INTO questions (id, author_id, concept, title, body, status, created_at)
       VALUES (?, ?, ?, ?, ?, 'open', ?)
-    `).run(id, req.user.id, concept || '', title, body || '', nowIso())
-    res.json({ id })
+    `).run(id, req.user.id, conceptName, title, body || '', nowIso())
+    markGapFromQuestion(req.user.id, picked, title)
+    res.json({ id, concept: conceptName })
   })
 
   app.post('/api/questions/:id/answers', requireAuth, (req, res) => {

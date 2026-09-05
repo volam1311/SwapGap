@@ -73,10 +73,26 @@ export function Match() {
         ))}
       </div>
       <div className="swap-heads">
-        <div className="card">You need help with: <b>{data.youNeed}</b></div>
+        <div className="card">You need help with: <b>{data.youNeed || 'Not mapped yet'}</b></div>
         <div className="arrow">↔</div>
-        <div className="card">You can teach: <b>{data.youCanTeach}</b></div>
+        <div className="card">You can teach: <b>{data.youCanTeach || 'After a diagnostic'}</b></div>
       </div>
+      {!data.youNeed && (
+        <div className="card pad stack">
+          <h3>Map a gap first</h3>
+          <p style={{ color: '#5b6b7f' }}>
+            Matching uses your Learning GPS. Diagnose a misconception or ask a question so we know what you need.
+          </p>
+          <div className="row">
+            <button className="btn btn-primary" onClick={() => navigate('/discover')}>
+              Discover my gaps
+            </button>
+            <button className="btn btn-secondary" onClick={() => navigate('/questions')}>
+              Ask a question
+            </button>
+          </div>
+        </div>
+      )}
 
       {mode === 'async' ? (
         <div className="card pad">
