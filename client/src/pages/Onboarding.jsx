@@ -68,7 +68,7 @@ export function Onboarding() {
     <div className="auth-wrap">
       <form className="card pad auth-card stack" onSubmit={submit} style={{ width: 'min(560px, 100%)' }}>
         <h1>What should we call you?</h1>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           Your unit is chosen later, on Discover Gaps, when you test something you are stuck on.
         </p>
         {error && <div className="error">{error}</div>}
@@ -109,7 +109,7 @@ export function Onboarding() {
           </select>
         </label>
         <div>
-          <span style={{ fontSize: 13, color: '#5b6b7f', fontWeight: 600 }}>Available session times</span>
+          <span className="muted" style={{ fontSize: 13, fontWeight: 500 }}>Available session times</span>
           <div className="stack" style={{ marginTop: 8 }}>
             {SLOTS.map((s) => (
               <label key={s.id} className="choice">

@@ -80,7 +80,7 @@ export function Match() {
       {!data.youNeed && (
         <div className="card pad stack">
           <h3>Map a gap first</h3>
-          <p style={{ color: '#5b6b7f' }}>
+          <p className="muted">
             Matching uses your Learning GPS. Diagnose a misconception or ask a question so we know what you need.
           </p>
           <div className="row">

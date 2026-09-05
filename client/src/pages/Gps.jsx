@@ -111,7 +111,7 @@ export function Gps() {
             You asked about <b>{data.fromQuestion.concept || data.fromQuestion.title}</b>. Run a short diagnostic
             to turn that into a confirmed gap and a practice plan.
           </p>
-          <p style={{ color: '#5b6b7f' }}>{data.fromQuestion.title}</p>
+          <p className="muted">{data.fromQuestion.title}</p>
           <div className="row">
             <Link className="btn btn-primary" to="/discover">
               Diagnose this gap
@@ -124,7 +124,7 @@ export function Gps() {
       ) : data.mapped ? (
         <div className="card pad stack">
           <h3>{data.current || 'A topic'} is on your map</h3>
-          <p style={{ color: '#5b6b7f' }}>
+          <p className="muted">
             Finish a diagnostic so we can name the misconception, or keep asking questions to add more nodes.
           </p>
           <div className="row">
@@ -139,7 +139,7 @@ export function Gps() {
       ) : (
         <div className="card pad stack">
           <h3>Nothing mapped yet</h3>
-          <p style={{ color: '#5b6b7f' }}>
+          <p className="muted">
             Start a diagnostic with a question you are stuck on, or post on the questions board. Either one places a
             node on your Learning GPS.
           </p>

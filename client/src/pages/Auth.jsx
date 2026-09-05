@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext.jsx'
+import { Brand } from '../components/ui.jsx'
 
 export function Login() {
   const { login, demo } = useAuth()
@@ -40,11 +41,9 @@ export function Login() {
   return (
     <div className="auth-wrap">
       <form className="card pad auth-card stack" onSubmit={onSubmit}>
-        <Link to="/" className="brand" style={{ color: '#0e2744', margin: 0 }}>
-          GapSwap
-        </Link>
+        <Brand />
         <h1>Welcome back</h1>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           Use your university email, or open the Maya ↔ Alex session demo.
         </p>
         {error && <div className="error">{error}</div>}
@@ -114,11 +113,9 @@ export function Signup() {
   return (
     <div className="auth-wrap">
       <form className="card pad auth-card stack" onSubmit={onSubmit}>
-        <Link to="/" className="brand" style={{ color: '#0e2744', margin: 0 }}>
-          GapSwap
-        </Link>
+        <Brand />
         <h1>Create an account</h1>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           Email and password first. Pick your unit on Discover Gaps when you test something you are stuck on.
         </p>
         {error && <div className="error">{error}</div>}

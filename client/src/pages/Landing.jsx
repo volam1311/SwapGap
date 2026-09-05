@@ -1,59 +1,75 @@
 import { Link } from 'react-router-dom'
+import { Brand } from '../components/ui.jsx'
 
 export function Landing() {
   return (
     <div className="landing">
       <nav className="landing-nav">
-        <div className="brand" style={{ color: '#0e2744', margin: 0 }}>
-          <span className="brand-mark" style={{ borderColor: '#1d4e89', color: '#1d4e89' }}>
-            ⇄
-          </span>
-          GapSwap
-        </div>
-        <div className="row">
-          <Link className="btn btn-secondary" to="/login">
-            Log in
-          </Link>
-          <Link className="btn btn-primary" to="/signup">
-            Sign up
-          </Link>
+        <div className="landing-nav-inner">
+          <Brand />
+          <div className="row">
+            <Link className="btn btn-ghost" to="/login">
+              Log in
+            </Link>
+            <Link className="btn btn-primary" to="/signup">
+              Sign up
+            </Link>
+          </div>
         </div>
       </nav>
       <section className="hero-copy">
-        <div>
-          <p className="page-kicker">Built for Australian first-year IT · QUT IFB104</p>
-          <h1>Find the exact gap. Swap the knowledge. Prove you improved.</h1>
-          <p style={{ fontSize: 18, color: '#5b6b7f', maxWidth: 560 }}>
-            Large first-year units share a handful of tutors. Students get stuck, then ask ChatGPT for the
-            assignment answer. GapSwap diagnoses the misconception, matches a peer in the same course, and
-            checks whether the gap actually closed.
-          </p>
-          <div className="row" style={{ marginTop: 22 }}>
-            <Link className="btn btn-primary" to="/signup">
-              Create a student profile
-            </Link>
-            <Link className="btn btn-secondary" to="/login">
-              Demo Maya / Alex
-            </Link>
-          </div>
-          <div className="loop">
-            <div>1. Diagnose the misconception — not just the wrong answer</div>
-            <div>2. See it on a Learning GPS</div>
-            <div>3. Match with a peer who can swap knowledge</div>
-            <div>4. Verify improvement with a post-session check</div>
-          </div>
+        <p className="page-kicker">Built for Australian students</p>
+        <h1>
+          Find the exact gap.
+          <br />
+          Swap the knowledge.
+          <br />
+          <span className="hero-grad">Prove you improved.</span>
+        </h1>
+        <p className="hero-lead">
+          Large first-year units share a handful of tutors. Students get stuck, then ask ChatGPT for the
+          assignment answer. GapSwap diagnoses the misconception, matches a peer in the same course, and
+          checks whether the gap actually closed.
+        </p>
+        <div className="row">
+          <Link className="btn btn-primary" to="/signup">
+            Create a student profile
+          </Link>
+          <Link className="btn btn-secondary" to="/login">
+            Demo Maya / Alex
+          </Link>
         </div>
-        <div className="card pad">
+      </section>
+      <section className="landing-preview">
+        <div className="card pad product-frame">
           <h3>The learning loop</h3>
-          <p style={{ color: '#5b6b7f', margin: '8px 0 16px' }}>
+          <p className="muted" style={{ margin: '8px 0 16px' }}>
             Diagnosis → pathway → human support → verified improvement
           </p>
           <GpsMini />
-          <p style={{ marginTop: 16, fontSize: 14, color: '#5b6b7f' }}>
+          <p className="product-note">
             Success is the red node turning green after a transfer quiz — not a session booked. Coming later:
             live two-way video, calendar sync, university SSO, and a full whiteboard. This demo uses a meeting
             link, structured session room, and an in-app calendar file.
           </p>
+        </div>
+      </section>
+      <section className="loop">
+        <div className="loop-step">
+          <b>01</b>
+          <span>Diagnose the misconception — not just the wrong answer</span>
+        </div>
+        <div className="loop-step">
+          <b>02</b>
+          <span>See it on a Learning GPS</span>
+        </div>
+        <div className="loop-step">
+          <b>03</b>
+          <span>Match with a peer who can swap knowledge</span>
+        </div>
+        <div className="loop-step">
+          <b>04</b>
+          <span>Verify improvement with a post-session check</span>
         </div>
       </section>
       <section className="landing-proof">
