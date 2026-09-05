@@ -48,7 +48,7 @@ Pushing to `main` runs GitHub Actions: **CI** builds the app, then **Deploy to R
 1. In Railway: project **Settings → Tokens** → create a project token for production.
 2. In GitHub: repo **Settings → Secrets and variables → Actions**
    - Secret `RAILWAY_TOKEN` = that project token
-   - Optional variable `RAILWAY_SERVICE` = the service name or id (needed if the project has more than one service)
+   - Variable `RAILWAY_SERVICE` = the **app** service name (not Postgres). Railway dashboard → click the Node service → copy the name in the header. Required when the project has more than one service.
 3. In Railway service settings, turn **off** GitHub auto-deploy so only this workflow ships the app (otherwise you get two deploys per push).
 4. Keep `OPENAI_API_KEY` and `JWT_SECRET` set on the Railway service. Add a volume and `DATA_DIR` if you want SQLite to survive redeploys.
 

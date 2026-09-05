@@ -22,15 +22,58 @@ jobs:
       - name: Deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+          RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE || secrets.RAILWAY_SERVICE }}
         run: |
-          if [ -z "$RAILWAY_TOKEN" ]; then
+          set -euo pipefail
+          if [ -z "${RAILWAY_TOKEN:-}" ]; then
             echo "Add a Railway project token as the GitHub secret RAILWAY_TOKEN."
             echo "Railway → project → Settings → Tokens"
             exit 1
           fi
-          if [ -n "$RAILWAY_SERVICE" ]; then
-            railway up --ci --service "$RAILWAY_SERVICE"
-          else
-            railway up --ci
+
+          if [ -z "${RAILWAY_SERVICE:-}" ]; then
+            railway service list --json > /tmp/railway-services.json 2>/tmp/railway-services.err || true
+            RAILWAY_SERVICE="$(python3 -c '
+          import json, os, sys
+          skip = ("postgres", "postgresql", "redis", "mysql", "mongo", "mongodb", "minio", "bucket")
+          preferred = ("swapgap", "gapswap", "web", "app", "server")
+          path = "/tmp/railway-services.json"
+          raw = open(path).read().strip() if os.path.exists(path) else ""
+          if not raw:
+              sys.exit(0)
+          try:
+              data = json.loads(raw)
+          except json.JSONDecodeError:
+              sys.exit(0)
+          items = data if isinstance(data, list) else data.get("services") or data.get("edges") or []
+          names = []
+          for s in items:
+              if not isinstance(s, dict):
+                  continue
+              node = s.get("node") if isinstance(s.get("node"), dict) else s
+              name = node.get("name") or node.get("serviceName") or ""
+              if name:
+                  names.append(name)
+          for name in names:
+              if name.lower() in preferred:
+                  print(name)
+                  sys.exit(0)
+          for name in names:
+              if not any(x in name.lower() for x in skip):
+                  print(name)
+                  sys.exit(0)
+          if names:
+              print(names[0])
+          ')"
           fi
+
+          if [ -z "${RAILWAY_SERVICE:-}" ]; then
+            echo "Multiple Railway services found. Set GitHub variable RAILWAY_SERVICE to the app service name."
+            echo "Railway dashboard → click the Node/web service → copy the name in the header."
+            railway service list || railway status || true
+            cat /tmp/railway-services.err 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "Deploying service: $RAILWAY_SERVICE"
+          railway up --ci --service "$RAILWAY_SERVICE"
