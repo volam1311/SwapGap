@@ -27,6 +27,9 @@ export function AppShell() {
           ))}
         </nav>
         <div className="sidebar-foot">
+          <NavLink to="/certificate" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+            Certificate
+          </NavLink>
           <NavLink to="/help" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
             Help & support
           </NavLink>

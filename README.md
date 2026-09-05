@@ -48,9 +48,10 @@ Without an OpenAI key the nested-loop diagnostic still works using the built-in 
 5. In another browser, **Continue as Alex** to join the same session from the other side.
 6. Join when ready → Ask for a hint / switch roles → Ready to verify.
 7. Answer the transfer quiz → Nested loops turns **Mastered**.
+8. Open **Certificate** — copy a CV bullet or Add to LinkedIn for the Semester 2, 2026 Peer Teaching & Support credential.
 
 ## What is real vs stand-in
 
-Shipped: diagnosis, GPS, reciprocal matching (swap / help / group / mentor / async), scheduling, session room, AI hints, post-session check, ratings, notifications, questions board, report/block, university-email verification flag.
+Shipped: diagnosis, GPS, reciprocal matching (swap / help / group / mentor / async), scheduling, session room, AI hints, post-session check, ratings, notifications, questions board, report/block, university-email verification flag, semester Peer Teaching & Support certificate (CV / LinkedIn).
 
 Stand-ins called out on the landing page: live two-way video (Jitsi link + local camera preview), full whiteboard, Google Calendar OAuth (download `.ics` instead), university SSO.

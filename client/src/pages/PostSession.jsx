@@ -95,7 +95,10 @@ export function PostSession() {
           </div>
           <div className="card pad stack">
             <h3>Rate your peer</h3>
-            <p style={{ color: '#5b6b7f' }}>Rewards good support — it does not certify professional tutors.</p>
+            <p style={{ color: '#5b6b7f' }}>
+              Ratings count toward your end-of-semester Peer Teaching & Support certificate for a CV or
+              LinkedIn. They reward good support — they do not certify professional tutors.
+            </p>
             {['helpfulness', 'clarity', 'reliability', 'respectfulness'].map((k) => (
               <label className="field" key={k}>
                 <span>{k}</span>
@@ -115,6 +118,9 @@ export function PostSession() {
           <div className="row">
             <Link className="btn btn-primary" to="/gps">
               Create targeted activity
+            </Link>
+            <Link className="btn btn-secondary" to="/certificate">
+              Semester certificate
             </Link>
             <Link className="btn btn-secondary" to="/home">
               Back to dashboard

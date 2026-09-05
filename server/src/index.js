@@ -10,6 +10,7 @@ import { gpsRoutes } from './routes/gps.js'
 import { matchRoutes } from './routes/matches.js'
 import { sessionRoutes } from './routes/sessions.js'
 import { questionRoutes, notificationRoutes, reportRoutes } from './routes/community.js'
+import { certificateRoutes } from './routes/certificate.js'
 
 const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n
 if (count === 0) {
@@ -33,6 +34,7 @@ sessionRoutes(app)
 questionRoutes(app)
 notificationRoutes(app)
 reportRoutes(app)
+certificateRoutes(app)
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, openai: Boolean(process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-key')) })

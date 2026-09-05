@@ -1,5 +1,6 @@
 import { db, meUser, parseJson } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
+import { buildCertificate } from '../services/certificate.js'
 
 function counts(userId) {
   const rows = db.prepare('SELECT status, COUNT(*) AS n FROM user_concepts WHERE user_id = ? GROUP BY status').all(userId)
@@ -121,8 +122,20 @@ export function meRoutes(app) {
         reliability: req.user.reliability,
         badges: buildBadges(sessionsDone, ratings.length, taught),
       },
+      certificate: summariseCertificate(buildCertificate(req.user.id)),
     })
   })
+}
+
+function summariseCertificate(cert) {
+  if (!cert) return null
+  return {
+    eligible: cert.eligible,
+    title: cert.title,
+    term: cert.term.label,
+    topics: cert.stats.topics,
+    sessionsTaught: cert.stats.sessionsTaught,
+  }
 }
 
 function avg(nums) {
