@@ -93,12 +93,12 @@ export const COHORT_INSIGHTS = [
 ]
 
 export function looksLikeNestedLoop(question = '') {
-  const q = question.toLowerCase()
+  const q = String(question || '').toLowerCase()
   return (
     q.includes('inner loop') ||
-    q.includes('nested') ||
-    q.includes('restart') ||
-    q.includes('overfitting') === false && q.includes('loop')
+    q.includes('nested loop') ||
+    q.includes('nested for') ||
+    (q.includes('restart') && q.includes('loop'))
   )
 }
 

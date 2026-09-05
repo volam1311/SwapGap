@@ -17,9 +17,12 @@ export function Home() {
   if (!data) return <div className="page">Loading…</div>
   const session = data.upcoming?.[0]
   const when = session ? new Date(session.startsAt) : null
-
   const uni = data.user.university || 'QUT'
-  const course = data.user.courseCode || 'IFB104'
+  const course = data.user.courseCode || ''
+  const courseName = data.user.course || ''
+  const courseLabel = [course, courseName].filter(Boolean).join(' — ')
+  const gapNode = data.gps?.find((c) => c.status === 'gap')
+  const hasGap = Boolean(gapNode || data.counts?.gap)
 
   return (
     <div className="page stack">
@@ -28,7 +31,8 @@ export function Home() {
           {greeting()}, {data.user.name} 👋
         </h1>
         <p className="page-sub">
-          {uni} · {course} {data.user.course ? `— ${data.user.course}` : ''} · verified .edu.au peer learning
+          {uni}
+          {courseLabel ? ` · ${courseLabel}` : ''} · verified .edu.au peer learning
         </p>
       </div>
       <div className="metric-strip">
@@ -69,10 +73,8 @@ export function Home() {
         <div className="stack">
           <div className="card course-card">
             <small>Current course</small>
-            <h3>
-              {course} — {data.user.course}
-            </h3>
-            <Link to="/gps">View course</Link>
+            <h3>{courseLabel || 'No unit yet'}</h3>
+            <Link to={courseLabel ? '/gps' : '/discover'}>{courseLabel ? 'View course' : 'Choose a unit'}</Link>
           </div>
           {session && (
             <div className="card pad">
@@ -93,14 +95,18 @@ export function Home() {
         <div className="card pad">
           <h3>Recommended next action</h3>
           <p style={{ color: '#5b6b7f', margin: '8px 0 12px' }}>
-            Nested loops is the IFB104 bottleneck. Diagnose it, swap with a peer, then prove the gap closed.
+            {gapNode
+              ? `${gapNode.name} is on your GPS. Diagnose it if you have not, swap with a peer, then prove the gap closed.`
+              : hasGap
+                ? 'You have an open gap. Open Learning GPS to see it, then swap with a peer and prove it closed.'
+                : 'Start a diagnostic or ask a question to place your first gap on the Learning GPS.'}
           </p>
           <div className="row">
-            <Link className="btn btn-primary" to="/gps">
-              Open Learning GPS
+            <Link className="btn btn-primary" to={hasGap ? '/gps' : '/discover'}>
+              {hasGap ? 'Open Learning GPS' : 'Discover my gaps'}
             </Link>
-            <Link className="btn btn-secondary" to="/match">
-              Find a match
+            <Link className="btn btn-secondary" to="/questions">
+              Ask a question
             </Link>
           </div>
         </div>

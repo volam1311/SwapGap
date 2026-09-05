@@ -8,7 +8,9 @@ export function Questions() {
   const [data, setData] = useState(null)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
+  const [concept, setConcept] = useState('')
   const [reply, setReply] = useState({})
+  const [posted, setPosted] = useState('')
 
   async function load() {
     setData(await api('/api/questions'))
@@ -19,9 +21,11 @@ export function Questions() {
 
   async function post(e) {
     e.preventDefault()
-    await api('/api/questions', { method: 'POST', body: { title, body, concept: 'Nested loops' } })
+    const res = await api('/api/questions', { method: 'POST', body: { title, body, concept } })
     setTitle('')
     setBody('')
+    setConcept('')
+    setPosted(`Pinned ${res.concept || 'your question'} on your Learning GPS.`)
     load()
   }
 
@@ -37,9 +41,22 @@ export function Questions() {
       <h1 className="page-title">Questions board</h1>
       <form className="card pad stack" onSubmit={post}>
         <h3>Ask asynchronously</h3>
+        <p style={{ color: '#5b6b7f' }}>Posting a question also places that topic on your Learning GPS.</p>
         <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <textarea placeholder="What are you stuck on?" value={body} onChange={(e) => setBody(e.target.value)} />
+        <label className="field">
+          <span>Topic (optional — we infer it if you leave this blank)</span>
+          <select value={concept} onChange={(e) => setConcept(e.target.value)}>
+            <option value="">Infer from my question</option>
+            {(data.concepts || []).map((c) => (
+              <option key={c.id} value={c.name}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
         <button className="btn btn-primary">Post question</button>
+        {posted && <p>{posted}</p>}
       </form>
       {data.questions.map((q) => (
         <div className="card pad stack" key={q.id}>
@@ -48,7 +65,7 @@ export function Questions() {
             <div>
               <h3>{q.title}</h3>
               <small>
-                {q.authorName} · {q.concept}
+                {q.authorName} {q.concept ? `· ${q.concept}` : ''}
               </small>
             </div>
           </div>

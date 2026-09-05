@@ -4,7 +4,6 @@ import { requireAuth } from '../middleware/auth.js'
 import { rankMatches, defaultAgenda } from '../services/matching.js'
 import { DEMO_SLOTS } from '../seed.js'
 import { chatJson } from '../services/openai.js'
-import { FALLBACK_DIAGNOSIS } from '../services/fallback.js'
 
 function notify(userId, type, title, body, link) {
   db.prepare(`
@@ -17,8 +16,8 @@ export function matchRoutes(app) {
   app.get('/api/matches', requireAuth, (req, res) => {
     const mode = req.query.mode || 'swap'
     const ranked = rankMatches(req.userRow, mode)
-    const gap = ranked[0]?.youNeed || FALLBACK_DIAGNOSIS.gap.concept
-    const teach = ranked[0]?.youCanTeach || 'Functions'
+    const gap = ranked[0]?.youNeed || null
+    const teach = ranked[0]?.youCanTeach || null
     const slots = DEMO_SLOTS()
 
     const fallback = {
@@ -29,11 +28,16 @@ export function matchRoutes(app) {
         { title: 'Peer drop-in: tracing tables', when: 'Wednesday 4:00 pm', place: 'Gardens Point' },
       ],
       socratic: {
-        title: 'AI-guided Socratic lesson',
-        summary: FALLBACK_DIAGNOSIS.plan.explanation,
+        title: gap ? `Guided practice: ${gap}` : 'Diagnose a gap first',
+        summary: gap
+          ? `Work a short Socratic walkthrough for ${gap} until a peer is free.`
+          : 'Complete a diagnostic or post a question so we know what to match on.',
       },
-      practice: FALLBACK_DIAGNOSIS.plan.practice,
-      resources: FALLBACK_DIAGNOSIS.plan.resources,
+      practice: gap ? [`Trace one small example of ${gap}.`, `Explain ${gap} out loud without code.`] : [],
+      resources: [
+        { title: 'Python Tutor — visual trace', url: 'https://pythontutor.com/' },
+        { title: 'Questions board', url: '/questions' },
+      ],
     }
 
     res.json({
@@ -49,11 +53,16 @@ export function matchRoutes(app) {
 
   app.post('/api/matches', requireAuth, (req, res) => {
     const { partnerId, mode, gapConcept, teachConcept, slotId, format } = req.body || {}
+    const ranked = partnerId
+      ? rankMatches(req.userRow, mode || 'swap').find((m) => m.userId === partnerId)
+      : rankMatches(req.userRow, mode || 'swap')[0]
+    const topic = gapConcept || ranked?.youNeed || 'this topic'
+    const teach = teachConcept || ranked?.youCanTeach || 'a strength'
     if (!partnerId) {
       const id = randomUUID()
       db.prepare(`
         INSERT INTO match_queue (id, user_id, concept, mode, created_at) VALUES (?, ?, ?, ?, ?)
-      `).run(id, req.user.id, gapConcept || 'Nested loops', mode || 'swap', nowIso())
+      `).run(id, req.user.id, topic, mode || 'swap', nowIso())
       notify(
         req.user.id,
         'queue',
@@ -67,7 +76,6 @@ export function matchRoutes(app) {
     const partner = db.prepare('SELECT * FROM users WHERE id = ?').get(partnerId)
     if (!partner) return res.status(404).json({ error: 'Peer not found' })
 
-    const ranked = rankMatches(req.userRow, mode || 'swap').find((m) => m.userId === partnerId)
     const matchId = randomUUID()
     db.prepare(`
       INSERT INTO matches (id, requester_id, partner_id, mode, gap_concept, teach_concept, score, reasons, status, created_at)
@@ -77,8 +85,8 @@ export function matchRoutes(app) {
       req.user.id,
       partnerId,
       mode || 'swap',
-      gapConcept || ranked?.youNeed || 'Nested loops',
-      teachConcept || ranked?.youCanTeach || 'Functions',
+      topic,
+      teach,
       ranked?.score || 80,
       JSON.stringify(ranked?.reasons || ['Compatible knowledge']),
       nowIso(),
@@ -87,14 +95,9 @@ export function matchRoutes(app) {
     const slot = DEMO_SLOTS().find((s) => s.id === slotId) || DEMO_SLOTS()[0]
     const sessionId = randomUUID()
     const duration = 20
-    const agenda = defaultAgenda(
-      req.user.name,
-      partner.name,
-      teachConcept || ranked?.youCanTeach || 'Functions',
-      gapConcept || ranked?.youNeed || 'Nested loops',
-      duration,
-    )
+    const agenda = defaultAgenda(req.user.name, partner.name, teach, topic, duration)
     const meetingUrl = `https://meet.jit.si/GapSwap-${sessionId}`
+    const nested = /nested|inner loop/i.test(topic)
 
     db.prepare(`
       INSERT INTO sessions (
@@ -107,25 +110,29 @@ export function matchRoutes(app) {
       matchId,
       req.user.id,
       partnerId,
-      gapConcept || ranked?.youNeed || 'Nested loops',
-      teachConcept || ranked?.youCanTeach || 'Functions',
+      topic,
+      teach,
       slot.iso,
       duration,
       format || 'online',
       meetingUrl,
       JSON.stringify(agenda),
-      JSON.stringify({
-        code: 'for i in range(2):\n    for j in range(3):\n        print(i, j)',
-        annotation: 'inner loop restarts here',
-        trace: [
-          { i: 0, j: 0, out: '0 0' },
-          { i: 0, j: 1, out: '0 1' },
-          { i: 0, j: 2, out: '0 2' },
-          { i: 1, j: 0, out: '1 0' },
-          { i: 1, j: 1, out: '1 1' },
-          { i: 1, j: 2, out: '1 2' },
-        ],
-      }),
+      JSON.stringify(
+        nested
+          ? {
+              code: 'for i in range(2):\n    for j in range(3):\n        print(i, j)',
+              annotation: 'inner loop restarts here',
+              trace: [
+                { i: 0, j: 0, out: '0 0' },
+                { i: 0, j: 1, out: '0 1' },
+                { i: 0, j: 2, out: '0 2' },
+                { i: 1, j: 0, out: '1 0' },
+                { i: 1, j: 1, out: '1 1' },
+                { i: 1, j: 2, out: '1 2' },
+              ],
+            }
+          : { code: '', annotation: `Worked example for ${topic}`, trace: [] },
+      ),
       nowIso(),
     )
 
@@ -151,19 +158,19 @@ export function matchRoutes(app) {
     const gps = db.prepare(`
       SELECT * FROM diagnostics WHERE user_id = ? AND status = 'complete' ORDER BY created_at DESC LIMIT 1
     `).get(req.user.id)
-    const topic = req.body?.topic || 'Nested loops'
+    const topic = req.body?.topic || 'this topic'
     const ai = await chatJson(
       'You are a Socratic tutor. Do not give the final answer. JSON: { "title": "", "steps": [{"ask": "", "hint": ""}], "check": "" }',
-      `Teach ${topic} socratically to a student whose diagnosis is ${gps?.result || JSON.stringify(FALLBACK_DIAGNOSIS)}`,
+      `Teach ${topic} socratically to a student whose diagnosis is ${gps?.result || '{}'}`,
     )
     res.json(
       ai || {
-        title: 'Why the inner loop restarts',
+        title: `A closer look at ${topic}`,
         steps: [
-          { ask: 'When the outer loop repeats, is the inner loop the same object or a new one?', hint: 'Think of range(3) as a fresh sequence.' },
-          { ask: 'What value must j have at the start of a new outer iteration?', hint: 'The first value of range(3).' },
+          { ask: `What is ${topic} actually doing, in one sentence?`, hint: 'Name the rule before tracing details.' },
+          { ask: 'Where would that rule first go wrong in a tiny example?', hint: 'The shaky step is the gap.' },
         ],
-        check: 'Trace one full outer iteration, then the first step of the next.',
+        check: `Retry a small example of ${topic} without looking at notes.`,
       },
     )
   })
