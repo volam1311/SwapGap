@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import os from 'node:os'
 import express from 'express'
 import cors from 'cors'
 import { db } from './db.js'
@@ -40,7 +41,20 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, openai: Boolean(process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your-key')) })
 })
 
+function lanAddresses() {
+  const out = []
+  for (const addrs of Object.values(os.networkInterfaces())) {
+    for (const a of addrs || []) {
+      if (a.family === 'IPv4' && !a.internal) out.push(a.address)
+    }
+  }
+  return out
+}
+
 const port = Number(process.env.PORT) || 4000
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`GapSwap API on http://localhost:${port}`)
+  for (const ip of lanAddresses()) {
+    console.log(`GapSwap API on your network: http://${ip}:${port}`)
+  }
 })

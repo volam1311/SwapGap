@@ -145,6 +145,11 @@ export function Certificate() {
         >
           {copied === 'url' ? 'Copied credential URL' : 'Copy credential URL'}
         </button>
+        <p style={{ color: '#5b6b7f', fontSize: 13 }}>
+          Anyone with this link can view the credential without signing in. On the same Wi‑Fi, share the
+          Network URL from your terminal (not localhost). It is not on the public internet until GapSwap is
+          deployed.
+        </p>
       </div>
       <p style={{ color: '#5b6b7f', fontSize: 13 }}>{cert.disclaimer}</p>
     </div>
@@ -185,6 +190,9 @@ export function CredentialPublic() {
         <p className="page-sub">Verified peer-learning credential</p>
         <CertificateMark cert={cert} />
         <p style={{ color: '#5b6b7f', fontSize: 13 }}>{cert.disclaimer}</p>
+        <p style={{ color: '#5b6b7f', fontSize: 13 }}>
+          This page is public — no GapSwap account required.
+        </p>
       </div>
     </div>
   )
