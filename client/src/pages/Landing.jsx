@@ -78,6 +78,13 @@ export function Landing() {
             it does not replace lecturers, tutors, or official support.
           </p>
         </div>
+        <div className="card pad">
+          <h3>Employability</h3>
+          <p>
+            Verified peer teaching becomes a semester certificate for a CV or LinkedIn — evidence of
+            communication and support, not a university award.
+          </p>
+        </div>
       </section>
     </div>
   )

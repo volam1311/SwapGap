@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../AuthContext.jsx'
 import { Avatar } from '../components/ui.jsx'
@@ -180,6 +180,17 @@ export function Profile() {
           ))}
         </div>
       </div>
+      <div className="card pad stack">
+        <h3>Employability credential</h3>
+        <p style={{ color: '#5b6b7f' }}>
+          {dash.certificate?.eligible
+            ? `${dash.certificate.title} for ${dash.certificate.term} is ready to add to your CV and LinkedIn.`
+            : 'Teach or support a peer this semester to earn a certificate you can put on a CV or LinkedIn.'}
+        </p>
+        <Link className="btn btn-primary" to="/certificate">
+          {dash.certificate?.eligible ? 'View certificate' : 'See how to earn it'}
+        </Link>
+      </div>
       <p style={{ color: '#5b6b7f' }}>Email is hidden from other students. Contact details are never shown publicly.</p>
     </div>
   )
@@ -279,6 +290,14 @@ export function Help() {
           Next: QUT SSO, more first-year units after IFB104, a tutor dashboard of anonymous cohort gaps, and
           live session tools. Accessibility: text-first flow, captions via the meeting link, report/block always
           available.
+        </p>
+      </div>
+      <div className="card pad stack">
+        <h3>Semester certificate</h3>
+        <p>
+          If you teach or support peers, GapSwap issues a Peer Teaching & Support certificate for the teaching
+          period (for example Semester 2, 2026). You can print it, copy a CV bullet, or add it to LinkedIn.
+          It is evidence of peer support, not a QUT award or professional teaching qualification.
         </p>
       </div>
       <div className="card pad">

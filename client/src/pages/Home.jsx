@@ -130,6 +130,17 @@ export function Home() {
           </p>
         </div>
       </div>
+      <div className="card pad stack">
+        <h3>End-of-semester credential</h3>
+        <p style={{ color: '#5b6b7f' }}>
+          {data.certificate?.eligible
+            ? `${data.certificate.title} for ${data.certificate.term} is ready. Add it to LinkedIn or copy a CV bullet.`
+            : 'Teach a topic you already understand, or answer on the board, to earn a Peer Teaching & Support certificate for this semester.'}
+        </p>
+        <Link className="btn btn-secondary" to="/certificate" style={{ alignSelf: 'start' }}>
+          {data.certificate?.eligible ? 'Open certificate' : 'Employability certificate'}
+        </Link>
+      </div>
     </div>
   )
 }

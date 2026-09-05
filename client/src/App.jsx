@@ -12,6 +12,7 @@ import { Match } from './pages/Match.jsx'
 import { SessionPage, Sessions } from './pages/Session.jsx'
 import { PostSession } from './pages/PostSession.jsx'
 import { Help, Profile, Questions, Settings } from './pages/Community.jsx'
+import { Certificate, CredentialPublic } from './pages/Certificate.jsx'
 
 function Private({ children }) {
   const { user, ready } = useAuth()
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/c/:code" element={<CredentialPublic />} />
           <Route
             path="/onboarding"
             element={
@@ -53,6 +55,7 @@ export default function App() {
             <Route path="/sessions/:id/check" element={<PostSession />} />
             <Route path="/questions" element={<Questions />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/certificate" element={<Certificate />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/help" element={<Help />} />
           </Route>
