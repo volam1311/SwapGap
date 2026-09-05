@@ -12,7 +12,9 @@ function courseLabel(code, name) {
 export function Discover() {
   const { user, refresh } = useAuth()
   const navigate = useNavigate()
-  const isMaya = user?.id === 'maya' || user?.email === 'maya@qut.edu.au'
+  const isMayaDemo =
+    (user?.id === 'maya' || user?.email === 'maya@qut.edu.au') &&
+    (user?.courseCode || '').toUpperCase() === 'IFB104'
   const savedCode = user?.courseCode || ''
   const savedName = user?.course || ''
   const hasSaved = Boolean(savedCode || savedName)
@@ -20,7 +22,7 @@ export function Discover() {
   const [courseMode, setCourseMode] = useState(hasSaved ? 'current' : 'new')
   const [courseCode, setCourseCode] = useState('')
   const [courseName, setCourseName] = useState('')
-  const [question, setQuestion] = useState(isMaya ? MAYA_QUESTION : '')
+  const [question, setQuestion] = useState(isMayaDemo ? MAYA_QUESTION : '')
   const [notes, setNotes] = useState('')
   const [imageDataUrl, setImageDataUrl] = useState('')
   const [busy, setBusy] = useState(false)
@@ -102,7 +104,10 @@ export function Discover() {
         </button>
         <button
           className={`choice${courseMode === 'new' ? ' active' : ''}`}
-          onClick={() => setCourseMode('new')}
+          onClick={() => {
+            setCourseMode('new')
+            setQuestion((q) => (q === MAYA_QUESTION ? '' : q))
+          }}
           type="button"
         >
           <b>Enter a different unit</b>
@@ -116,7 +121,7 @@ export function Discover() {
             <input
               value={courseCode}
               onChange={(e) => setCourseCode(e.target.value)}
-              placeholder="IFB104"
+              placeholder="e.g. CAB202"
             />
           </label>
           <label className="field">
@@ -170,7 +175,12 @@ export function Discover() {
             className="btn btn-secondary"
             type="button"
             onClick={() =>
-              setNotes((n) => n || (isMaya ? 'Lecture: nested for-loops and trace tables.' : 'Lecture notes from this week.'))
+              setNotes((n) =>
+                n ||
+                (isMayaDemo && courseMode === 'current'
+                  ? 'Lecture: nested for-loops and trace tables.'
+                  : 'Lecture notes from this week.'),
+              )
             }
           >
             Add lecture notes

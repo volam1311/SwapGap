@@ -19,7 +19,7 @@ export function Gps() {
   if (!data) return <div className="page">Building your route…</div>
   const d = data.diagnosis
   const gap = d?.gap
-  const course = data.courseCode || 'IFB104'
+  const course = data.courseCode || ''
 
   return (
     <div className="page stack">
@@ -29,9 +29,11 @@ export function Gps() {
           ? 'Success is this node turning green after a verified check — not a session booked.'
           : 'This fills in when you diagnose a misconception or ask a question.'}
       </p>
-      <div className="card pad">
-        <GpsPath path={data.path} />
-      </div>
+      {data.path?.length > 0 && (
+        <div className="card pad">
+          <GpsPath path={data.path} />
+        </div>
+      )}
 
       {gap ? (
         <>
@@ -39,7 +41,7 @@ export function Gps() {
             <h3>Knowledge gap detected{gap.concept ? `: ${gap.concept}` : ''}</h3>
             <p style={{ marginTop: 8 }}>{gap.misconception}</p>
             <p style={{ marginTop: 8 }}>
-              <b>Why this matters for {course}.</b> {gap.whyItMatters}
+              <b>Why this matters{course ? ` for ${course}` : ''}.</b> {gap.whyItMatters}
             </p>
           </div>
           <div className="evidence">
