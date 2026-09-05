@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../AuthContext.jsx'
 import logo from '../assets/logo-lockup.png'
@@ -23,9 +23,15 @@ export function Avatar({ name, color, size = 34 }) {
 }
 
 export function TopBar() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [notes, setNotes] = useState({ unread: 0, notifications: [] })
+
+  function goToLogin() {
+    logout()
+    navigate('/login')
+  }
 
   useEffect(() => {
     api('/api/notifications')
@@ -71,6 +77,9 @@ export function TopBar() {
         <Avatar name={user?.name} color={user?.avatarColor} />
         {user?.name}
       </Link>
+      <button className="btn btn-ghost" type="button" onClick={goToLogin}>
+        Log in
+      </button>
     </header>
   )
 }

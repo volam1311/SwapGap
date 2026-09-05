@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../AuthContext.jsx'
 import { Avatar } from '../components/ui.jsx'
@@ -104,9 +104,6 @@ export function Profile() {
       setForm({
         name: d.user.name,
         university: d.user.university || '',
-        courseCode: d.user.courseCode || '',
-        course: d.user.course || '',
-        bio: d.user.bio || '',
         learningStyle: d.user.learningStyle,
         preference: d.user.preference,
         teachable: (d.teachable || []).join(', '),
@@ -139,18 +136,6 @@ export function Profile() {
         <label className="field">
           <span>University</span>
           <input value={form.university} onChange={(e) => setForm({ ...form, university: e.target.value })} />
-        </label>
-        <label className="field">
-          <span>Course code</span>
-          <input value={form.courseCode} onChange={(e) => setForm({ ...form, courseCode: e.target.value })} />
-        </label>
-        <label className="field">
-          <span>Course name</span>
-          <input value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })} />
-        </label>
-        <label className="field">
-          <span>Bio</span>
-          <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
         </label>
         <label className="field">
           <span>Learning style</span>
@@ -197,8 +182,7 @@ export function Profile() {
 }
 
 export function Settings() {
-  const { user, logout, refresh } = useAuth()
-  const navigate = useNavigate()
+  const { user, refresh } = useAuth()
   const [hide, setHide] = useState(true)
   const [target, setTarget] = useState('alex')
   const [reason, setReason] = useState('')
@@ -250,15 +234,6 @@ export function Settings() {
         </div>
       </div>
       {done && <p>{done}</p>}
-      <button
-        className="btn btn-secondary"
-        onClick={() => {
-          logout()
-          navigate('/')
-        }}
-      >
-        Log out
-      </button>
     </div>
   )
 }
