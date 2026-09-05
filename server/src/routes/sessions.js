@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { db, nowIso, parseJson } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { chatJson } from '../services/openai.js'
-import { FALLBACK_QUIZ, gradeShort, COHORT_INSIGHTS } from '../services/fallback.js'
+import { FALLBACK_QUIZ, gradeShort, COHORT_INSIGHTS, FALLBACK_DIAGNOSIS } from '../services/fallback.js'
 import { shapeSession } from './me.js'
 
 function loadSession(id, userId) {
@@ -26,14 +26,17 @@ function fullSession(s, userId) {
   return {
     id: s.id,
     matchId: s.match_id,
+    youAreHost,
     you: youAreHost
-      ? { id: s.host_id, name: s.host_name, color: s.host_color, role: s.role_phase === 'a_teaches' ? 'Teaching' : 'Learning' }
-      : { id: s.partner_id, name: s.partner_name, color: s.partner_color, role: s.role_phase === 'b_teaches' ? 'Teaching' : 'Learning' },
+      ? { id: s.host_id, name: s.host_name, color: s.host_color, role: s.role_phase === 'a_teaches' ? 'Facilitating' : 'Explaining back' }
+      : { id: s.partner_id, name: s.partner_name, color: s.partner_color, role: s.role_phase === 'b_teaches' ? 'Facilitating' : 'Explaining back' },
     peer: youAreHost
-      ? { id: s.partner_id, name: s.partner_name, color: s.partner_color, role: s.role_phase === 'b_teaches' ? 'Teaching' : 'Learning' }
-      : { id: s.host_id, name: s.host_name, color: s.host_color, role: s.role_phase === 'a_teaches' ? 'Teaching' : 'Learning' },
+      ? { id: s.partner_id, name: s.partner_name, color: s.partner_color, role: s.role_phase === 'b_teaches' ? 'Facilitating' : 'Explaining back' }
+      : { id: s.host_id, name: s.host_name, color: s.host_color, role: s.role_phase === 'a_teaches' ? 'Facilitating' : 'Explaining back' },
     gapConcept: s.gap_concept,
     teachConcept: s.teach_concept,
+    youFacilitateConcept: youAreHost ? s.teach_concept : s.gap_concept,
+    peerFacilitateConcept: youAreHost ? s.gap_concept : s.teach_concept,
     startsAt: s.starts_at,
     durationMin: s.duration_min,
     format: s.format,
@@ -46,9 +49,9 @@ function fullSession(s, userId) {
     rolePhase: s.role_phase,
     reminderMin: s.reminder_min,
     checklist: [
-      'Review your teaching prompt',
-      'Bring one example',
-      'Test camera and microphone',
+      'Read the session pack',
+      'Ask the three prompt questions',
+      'Listen for a fluent explanation — do not invent theory',
     ],
   }
 }
@@ -169,6 +172,12 @@ export function sessionRoutes(app) {
       WHERE c.on_gps = 1 ORDER BY c.sort_order
     `).all(req.user.id)
 
+    const diagRow = db
+      .prepare(`SELECT * FROM diagnostics WHERE user_id = ? AND status = 'complete' ORDER BY created_at DESC LIMIT 1`)
+      .get(req.user.id)
+    const diagnosis = parseJson(diagRow?.result, FALLBACK_DIAGNOSIS)
+    const peerName = s.host_id === req.user.id ? s.partner_name : s.host_name
+
     res.json({
       quizId,
       correct,
@@ -179,6 +188,15 @@ export function sessionRoutes(app) {
       path,
       cohort: COHORT_INSIGHTS,
       masteryRate: 68,
+      peerName,
+      peerConcept: s.gap_concept,
+      escalation: {
+        destination: 'Student Success',
+        concept: s.gap_concept,
+        misconception: diagnosis?.gap?.misconception || `Still developing ${s.gap_concept}.`,
+        evidence: diagnosis?.evidence || {},
+        whyItMatters: diagnosis?.gap?.whyItMatters || '',
+      },
     })
   })
 

@@ -63,8 +63,8 @@ export function Match() {
 
   return (
     <div className="page stack">
-      <h1 className="page-title">Schedule your Knowledge Swap</h1>
-      <p className="page-sub">Same unit, reciprocal skills, overlapping Australian evening / class times.</p>
+      <h1 className="page-title">Schedule a scripted check</h1>
+      <p className="page-sub">Same unit, complementary gaps, overlapping Australian evening / class times. Two-way is preferred; one-way is still valid.</p>
       <div className="row">
         {MODES.map((m) => (
           <button key={m.id} className={`choice${mode === m.id ? ' active' : ''}`} onClick={() => setMode(m.id)}>
@@ -73,9 +73,9 @@ export function Match() {
         ))}
       </div>
       <div className="swap-heads">
-        <div className="card">You need help with: <b>{data.youNeed || 'Not mapped yet'}</b></div>
+        <div className="card">You need a check on: <b>{data.youNeed || 'Not mapped yet'}</b></div>
         <div className="arrow">↔</div>
-        <div className="card">You can teach: <b>{data.youCanTeach || 'After a diagnostic'}</b></div>
+        <div className="card">You can facilitate: <b>{data.youCanTeach || 'After a diagnostic'}</b></div>
       </div>
       {!data.youNeed && (
         <div className="card pad stack">
@@ -111,6 +111,12 @@ export function Match() {
                 <Avatar name={m.name} color={m.avatarColor} />
                 <div>
                   <b>{m.name}</b>
+                  <div className="match-trust">
+                    {m.verified ? <span>Concept verified</span> : <span>Not yet verified</span>}
+                    <span>{m.sessionsOnConcept || 0} sessions on this concept</span>
+                    <span>{m.passRate != null ? `${m.passRate}% pass rate` : 'No pass rate yet'}</span>
+                    <span>{m.onTimeRate != null ? `${m.onTimeRate}% on time` : 'On-time n/a'}</span>
+                  </div>
                   <div className="tags" style={{ marginTop: 6 }}>
                     {m.reasons.map((r) => (
                       <span className="tag" key={r}>
@@ -157,8 +163,8 @@ export function Match() {
             </div>
             <div className="card pad">
               <h3>Agenda · 20 minutes</h3>
-              <p>10 mins you teach {data.youCanTeach}</p>
-              <p>10 mins they teach {data.youNeed}</p>
+              <p>10 min scripted check on {data.youCanTeach || 'your strength'}</p>
+              <p>10 min scripted check on {data.youNeed || 'your gap'}</p>
             </div>
             <SafetyNote />
             <button className="btn btn-primary btn-lg" onClick={confirm} disabled={busy}>

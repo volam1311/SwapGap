@@ -22,14 +22,14 @@ export function Landing() {
         <h1>
           Find the exact gap.
           <br />
-          Swap the knowledge.
+          Route the cheapest sufficient help.
           <br />
           <span className="hero-grad">Prove you improved.</span>
         </h1>
         <p className="hero-lead">
           Large first-year units share a handful of tutors. Students get stuck, then ask ChatGPT for the
-          assignment answer. GapSwap diagnoses the misconception, matches a peer in the same course, and
-          checks whether the gap actually closed.
+          assignment answer. GapSwap diagnoses the missing concept, routes a scripted peer check or official
+          support, and proves whether the gap closed.
         </p>
         <div className="row">
           <Link className="btn btn-primary" to="/signup">
@@ -44,13 +44,13 @@ export function Landing() {
         <div className="card pad product-frame">
           <h3>The learning loop</h3>
           <p className="muted" style={{ margin: '8px 0 16px' }}>
-            Diagnosis → pathway → human support → verified improvement
+            Diagnosis → cheapest sufficient support → human checker → verified improvement
           </p>
           <GpsMini />
           <p className="product-note">
             Success is the red node turning green after a transfer quiz — not a session booked. Coming later:
             live two-way video, calendar sync, university SSO, and a full whiteboard. This demo uses a meeting
-            link, structured session room, and an in-app calendar file.
+            link, a scripted session pack, and an in-app calendar file.
           </p>
         </div>
       </section>
@@ -61,15 +61,15 @@ export function Landing() {
         </div>
         <div className="loop-step">
           <b>02</b>
-          <span>See it on a Learning GPS</span>
+          <span>Route to the cheapest sufficient support</span>
         </div>
         <div className="loop-step">
           <b>03</b>
-          <span>Match with a peer who can swap knowledge</span>
+          <span>Run a scripted peer check against approved content</span>
         </div>
         <div className="loop-step">
           <b>04</b>
-          <span>Verify improvement with a post-session check</span>
+          <span>Verify improvement — or escalate to Student Success</span>
         </div>
       </section>
       <section className="landing-proof">
@@ -83,22 +83,23 @@ export function Landing() {
         <div className="card pad">
           <h3>How we measure success</h3>
           <p>
-            Diagnostic completed → gap on the GPS → reciprocal 20-minute swap → transfer quiz passed. The
-            metric is mastery movement, not time on the platform.
+            Diagnostic completed → gap on the GPS → scripted check → transfer quiz passed. The metric is
+            mastery movement, not time on the platform.
           </p>
         </div>
         <div className="card pad">
           <h3>Human oversight</h3>
           <p>
-            AI locates the gap. A verified .edu.au peer teaches. GapSwap never writes assessment answers, and
-            it does not replace lecturers, tutors, or official support.
+            We do not teach. Content is system-provided; peers check whether you can explain it back. We do
+            not replace Student Success — we filter foundational gaps and escalate the cases that need a
+            trained tutor, complete with a diagnostic profile.
           </p>
         </div>
         <div className="card pad">
-          <h3>Employability</h3>
+          <h3>By-product</h3>
           <p>
-            Verified peer teaching becomes a semester certificate for a CV or LinkedIn — evidence of
-            communication and support, not a university award.
+            Verified support can become a semester certificate for a CV or LinkedIn. That is evidence of the
+            loop, not the product.
           </p>
         </div>
       </section>

@@ -8,8 +8,7 @@ export function PostSession() {
   const [items, setItems] = useState([])
   const [answers, setAnswers] = useState([])
   const [result, setResult] = useState(null)
-  const [rating, setRating] = useState({ helpfulness: 5, clarity: 5, reliability: 5, respectfulness: 5, goalAchieved: true })
-  const [rated, setRated] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     api(`/api/sessions/${id}/quiz`, { method: 'POST', body: { generate: true } }).then((data) => {
@@ -23,9 +22,22 @@ export function PostSession() {
     setResult(data)
   }
 
-  async function sendRating() {
-    await api(`/api/sessions/${id}/rate`, { method: 'POST', body: rating })
-    setRated(true)
+  async function copyProfile() {
+    const e = result?.escalation || {}
+    const evidence = e.evidence || {}
+    const text = [
+      `GapSwap diagnostic profile for Student Success`,
+      `Concept: ${e.concept || result?.peerConcept || 'unknown'}`,
+      `Misconception: ${e.misconception || ''}`,
+      evidence.prediction ? `Prediction: ${evidence.prediction}` : '',
+      evidence.reasoning ? `Reasoning: ${evidence.reasoning}` : '',
+      evidence.confidence ? `Confidence: ${evidence.confidence}` : '',
+      `Transfer check: ${result.correct}/${result.total} — status unchanged.`,
+    ]
+      .filter(Boolean)
+      .join('\n')
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
   }
 
   return (
@@ -53,16 +65,56 @@ export function PostSession() {
             <div className="card pad success-card">
               <h2>{result.mastered} — Mastered</h2>
               <p>
-                This is the success metric: after a 20-minute reciprocal swap, the gap moved from red to green
-                on the Learning GPS.
+                This is the success metric: after a scripted check, the gap moved from red to green on the
+                Learning GPS.
+              </p>
+              <p className="muted" style={{ marginTop: 8 }}>
+                This pass is recorded against {result.peerName || 'your peer'}’s {result.peerConcept || 'concept'}{' '}
+                transfer-check pass rate.
               </p>
             </div>
           )}
           {!result.passed && (
-            <div className="gap-banner">
-              <h3>Still developing</h3>
-              <p>Another short session is recommended before this concept turns green.</p>
-            </div>
+            <>
+              <div className="gap-banner">
+                <h3>Still developing</h3>
+                <p>The concept status does not change. This outcome is also a signal about the session.</p>
+              </div>
+              <div className="card pad stack escalate-card">
+                <h3>Escalate to Student Success</h3>
+                <p className="muted">
+                  GapSwap filters foundational gaps. This check did not transfer — send the diagnostic
+                  profile to a trained tutor rather than another unscripted peer session.
+                </p>
+                <p>
+                  <b>Concept.</b> {result.escalation?.concept || result.peerConcept}
+                </p>
+                <p>
+                  <b>Misconception.</b> {result.escalation?.misconception}
+                </p>
+                {result.escalation?.evidence?.prediction && (
+                  <p>
+                    <b>Prediction.</b> {result.escalation.evidence.prediction}
+                  </p>
+                )}
+                {result.escalation?.evidence?.reasoning && (
+                  <p>
+                    <b>Reasoning.</b> {result.escalation.evidence.reasoning}
+                  </p>
+                )}
+                {result.escalation?.whyItMatters && (
+                  <p>
+                    <b>Why it matters.</b> {result.escalation.whyItMatters}
+                  </p>
+                )}
+                <p className="muted" style={{ fontSize: 13 }}>
+                  Recorded against {result.peerName || 'your peer'}’s {result.peerConcept || 'concept'} pass rate.
+                </p>
+                <button className="btn btn-primary" onClick={copyProfile}>
+                  {copied ? 'Diagnostic profile copied' : 'Copy diagnostic profile'}
+                </button>
+              </div>
+            </>
           )}
           <div className="card pad">
             <h3>Learning route</h3>
@@ -93,31 +145,9 @@ export function PostSession() {
               <div className="card pad">Anonymous cohort insight</div>
             </div>
           </div>
-          <div className="card pad stack">
-            <h3>Rate your peer</h3>
-            <p className="muted">
-              Ratings count toward your end-of-semester Peer Teaching & Support certificate for a CV or
-              LinkedIn. They reward good support — they do not certify professional tutors.
-            </p>
-            {['helpfulness', 'clarity', 'reliability', 'respectfulness'].map((k) => (
-              <label className="field" key={k}>
-                <span>{k}</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={rating[k]}
-                  onChange={(e) => setRating({ ...rating, [k]: Number(e.target.value) })}
-                />
-              </label>
-            ))}
-            <button className="btn btn-secondary" onClick={sendRating} disabled={rated}>
-              {rated ? 'Thanks for the feedback' : 'Submit rating'}
-            </button>
-          </div>
           <div className="row">
             <Link className="btn btn-primary" to="/gps">
-              Create targeted activity
+              Back to Learning GPS
             </Link>
             <Link className="btn btn-secondary" to="/certificate">
               Semester certificate

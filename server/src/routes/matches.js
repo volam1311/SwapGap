@@ -4,6 +4,7 @@ import { requireAuth } from '../middleware/auth.js'
 import { rankMatches, defaultAgenda } from '../services/matching.js'
 import { DEMO_SLOTS } from '../seed.js'
 import { chatJson } from '../services/openai.js'
+import { sessionWorkspace } from '../services/fallback.js'
 
 function notify(userId, type, title, body, link) {
   db.prepare(`
@@ -97,7 +98,6 @@ export function matchRoutes(app) {
     const duration = 20
     const agenda = defaultAgenda(req.user.name, partner.name, teach, topic, duration)
     const meetingUrl = `https://meet.jit.si/GapSwap-${sessionId}`
-    const nested = /nested|inner loop/i.test(topic)
 
     db.prepare(`
       INSERT INTO sessions (
@@ -117,22 +117,7 @@ export function matchRoutes(app) {
       format || 'online',
       meetingUrl,
       JSON.stringify(agenda),
-      JSON.stringify(
-        nested
-          ? {
-              code: 'for i in range(2):\n    for j in range(3):\n        print(i, j)',
-              annotation: 'inner loop restarts here',
-              trace: [
-                { i: 0, j: 0, out: '0 0' },
-                { i: 0, j: 1, out: '0 1' },
-                { i: 0, j: 2, out: '0 2' },
-                { i: 1, j: 0, out: '1 0' },
-                { i: 1, j: 1, out: '1 1' },
-                { i: 1, j: 2, out: '1 2' },
-              ],
-            }
-          : { code: '', annotation: `Worked example for ${topic}`, trace: [] },
-      ),
+      JSON.stringify(sessionWorkspace(topic, teach)),
       nowIso(),
     )
 

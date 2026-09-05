@@ -161,11 +161,11 @@ export function Profile() {
           <input value={form.preference} onChange={(e) => setForm({ ...form, preference: e.target.value })} />
         </label>
         <label className="field">
-          <span>Skills you can teach</span>
+          <span>Concepts you can facilitate</span>
           <input value={form.teachable} onChange={(e) => setForm({ ...form, teachable: e.target.value })} />
         </label>
         <p className="muted" style={{ fontSize: 13 }}>
-          These are suggested after a diagnostic. Only keep topics you are willing to teach a peer.
+          These are suggested after a diagnostic. Only keep topics you are willing to run a scripted check on.
         </p>
         <button className="btn btn-primary">Save profile</button>
       </form>
@@ -185,7 +185,7 @@ export function Profile() {
         <p className="muted">
           {dash.certificate?.eligible
             ? `${dash.certificate.title} for ${dash.certificate.term} is ready to add to your CV and LinkedIn.`
-            : 'Teach or support a peer this semester to earn a certificate you can put on a CV or LinkedIn.'}
+            : 'Facilitate a scripted check this semester to earn a certificate you can put on a CV or LinkedIn.'}
         </p>
         <Link className="btn btn-primary" to="/certificate">
           {dash.certificate?.eligible ? 'View certificate' : 'See how to earn it'}
@@ -271,20 +271,22 @@ export function Help() {
         <h3>Community guidelines</h3>
         <p>Be respectful. Stay on the learning goal. Do not share assessment answers that would constitute academic misconduct.</p>
         <p>
-          <b>Peer guidance is not official academic advice.</b> GapSwap matches students to help each other understand
-          concepts. It does not replace your lecturer, tutor, or university support services.
+          <b>Peer guidance is not official academic advice.</b> GapSwap triages bottlenecks and routes to a
+          scripted peer check or Student Success. It does not replace your lecturer, tutor, or university
+          support services.
         </p>
         <p>You can cancel a session, leave the room, or report a peer at any time from Settings.</p>
       </div>
       <div className="card pad stack">
         <h3>What we measure</h3>
-        <p>Diagnostic completed, GPS gap identified, session finished, transfer quiz passed. Booked time is not success.</p>
+        <p>Diagnostic completed, GPS gap identified, scripted check finished, transfer quiz passed. Booked time is not success.</p>
       </div>
       <div className="card pad stack">
         <h3>Limits, risks and next 90 days</h3>
         <p>
           Matching is heuristic and works best inside one unit. Video, SSO and a full whiteboard are stand-ins.
-          Fairness risk: popular students could be over-requested — reliability and reciprocal swaps reduce that.
+          Fairness risk: popular students could be over-requested — concept pass rates and complementary
+          matches reduce that.
         </p>
         <p>
           Next: QUT SSO, more first-year units after IFB104, a tutor dashboard of anonymous cohort gaps, and
@@ -295,9 +297,9 @@ export function Help() {
       <div className="card pad stack">
         <h3>Semester certificate</h3>
         <p>
-          If you teach or support peers, GapSwap issues a Peer Teaching & Support certificate for the teaching
+          If you facilitate scripted checks, GapSwap issues a Peer Teaching & Support certificate for the teaching
           period (for example Semester 2, 2026). You can print it, copy a CV bullet, or add it to LinkedIn.
-          It is evidence of peer support, not a QUT award or professional teaching qualification.
+          It is a by-product of verified support, not a QUT award or professional teaching qualification.
         </p>
       </div>
       <div className="card pad">
