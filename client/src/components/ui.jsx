@@ -182,7 +182,7 @@ export function TopBar() {
         {user?.name}
       </Link>
       <button className="btn btn-ghost" type="button" onClick={goToLogin}>
-        Log in
+        Log out
       </button>
     </header>
   )
