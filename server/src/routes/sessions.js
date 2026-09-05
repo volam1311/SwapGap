@@ -3,6 +3,7 @@ import { db, nowIso, parseJson } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { chatJson } from '../services/openai.js'
 import { FALLBACK_QUIZ, gradeShort, COHORT_INSIGHTS, FALLBACK_DIAGNOSIS } from '../services/fallback.js'
+import { buildGpsPath } from '../services/concepts.js'
 import { shapeSession } from './me.js'
 
 function loadSession(id, userId) {
@@ -132,7 +133,7 @@ export function sessionRoutes(app) {
     if (req.body?.generate) {
       const ai = await chatJson(
         'Create a 2-question transfer quiz. JSON: { "items": [{"id": "", "prompt": "", "code": "", "type": "short", "answer": ""}] }',
-        `Original gap: ${s.gap_concept}. Misconception: inner loop continues instead of restarting.`,
+        `Original gap: ${s.gap_concept}. Write questions about that concept, not a nested-loop demo unless the gap is nested loops.`,
       )
       const items = ai?.items?.length ? ai.items : FALLBACK_QUIZ
       return res.json({ items, cohort: COHORT_INSIGHTS })
@@ -166,11 +167,7 @@ export function sessionRoutes(app) {
       db.prepare("UPDATE sessions SET status = 'completed' WHERE id = ?").run(s.id)
     }
 
-    const path = db.prepare(`
-      SELECT c.id, c.name, uc.status FROM concepts c
-      LEFT JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
-      WHERE c.on_gps = 1 ORDER BY c.sort_order
-    `).all(req.user.id)
+    const path = buildGpsPath(req.user.id, { courseCode: req.user.courseCode })
 
     const diagRow = db
       .prepare(`SELECT * FROM diagnostics WHERE user_id = ? AND status = 'complete' ORDER BY created_at DESC LIMIT 1`)

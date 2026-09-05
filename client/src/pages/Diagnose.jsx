@@ -70,7 +70,10 @@ export function Diagnose() {
     return (
       <div className="page stack">
         <h1 className="page-title">Here’s what we found</h1>
-        <p className="page-sub">The diagnostic evaluated your answers. You choose which strengths you are willing to facilitate.</p>
+        <p className="page-sub">
+          {result.courseCode ? `${result.courseCode} · ` : ''}
+          The diagnostic evaluated your answers. You choose which strengths you are willing to facilitate.
+        </p>
         <div className="gap-banner">
           <h3>Gap: {gap}</h3>
           <p style={{ marginTop: 8 }}>{diagnosis.gap?.misconception}</p>
@@ -104,6 +107,10 @@ export function Diagnose() {
   return (
     <div className="page stack">
       <h1 className="page-title">Let’s locate the gap</h1>
+      <p className="page-sub">
+        {data.courseCode ? `${data.courseCode} · ` : ''}
+        {data.question}
+      </p>
       <div>
         <p style={{ fontWeight: 700, marginBottom: 8 }}>
           Checkpoint {data.currentStep} of {data.totalSteps}

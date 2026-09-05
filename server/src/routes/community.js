@@ -24,7 +24,7 @@ export function questionRoutes(app) {
       })
     }
     res.json({
-      concepts: listConcepts(),
+      concepts: listConcepts(req.user.courseCode),
       questions: rows.map((q) => ({
         id: q.id,
         authorName: q.author_name,
@@ -42,7 +42,9 @@ export function questionRoutes(app) {
   app.post('/api/questions', requireAuth, (req, res) => {
     const { title, body, concept } = req.body || {}
     if (!title) return res.status(400).json({ error: 'Title required' })
-    const picked = conceptByName(concept) || inferConcept(concept, title, body)
+    const picked =
+      conceptByName(concept, req.user.courseCode) ||
+      inferConcept(concept, title, body, { courseCode: req.user.courseCode })
     const conceptName = (concept && String(concept).trim()) || picked?.name || ''
     const id = randomUUID()
     db.prepare(`

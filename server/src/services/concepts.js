@@ -26,23 +26,84 @@ const EXTRA_KEYS = {
   indentation: ['indent', 'indentation'],
 }
 
-export function listConcepts() {
-  return db.prepare('SELECT id, name, prereq_id, sort_order, on_gps FROM concepts ORDER BY sort_order').all()
+const CONCEPT_COLS = 'id, name, prereq_id, sort_order, on_gps, course_code'
+
+export function isCatalogCourse(code) {
+  return String(code || '').trim().toUpperCase() === 'IFB104'
+}
+
+export function shortTopic(question) {
+  const q = String(question || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!q) return 'Current question'
+  const cut = q.split(/[?.!]/)[0].trim() || q
+  return cut.length > 42 ? `${cut.slice(0, 42)}…` : cut
+}
+
+function slugifyConcept(name) {
+  return (
+    String(name || 'topic')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40) || 'topic'
+  )
+}
+
+export function listConcepts(courseCode) {
+  if (courseCode) {
+    return db
+      .prepare(`SELECT ${CONCEPT_COLS} FROM concepts WHERE course_code = ? ORDER BY sort_order`)
+      .all(String(courseCode).trim())
+  }
+  return db.prepare(`SELECT ${CONCEPT_COLS} FROM concepts ORDER BY sort_order`).all()
 }
 
 export function conceptById(id) {
   if (!id) return null
-  return db.prepare('SELECT id, name, prereq_id, sort_order, on_gps FROM concepts WHERE id = ?').get(id)
+  return db.prepare(`SELECT ${CONCEPT_COLS} FROM concepts WHERE id = ?`).get(id)
 }
 
-export function conceptByName(name) {
+export function conceptByName(name, courseCode) {
   if (!name) return null
-  return db
-    .prepare('SELECT id, name, prereq_id, sort_order, on_gps FROM concepts WHERE lower(name) = lower(?)')
-    .get(String(name).trim())
+  const trimmed = String(name).trim()
+  if (courseCode) {
+    const inCourse = db
+      .prepare(`SELECT ${CONCEPT_COLS} FROM concepts WHERE lower(name) = lower(?) AND course_code = ?`)
+      .get(trimmed, String(courseCode).trim())
+    if (inCourse) return inCourse
+    if (!isCatalogCourse(courseCode)) return null
+  }
+  return db.prepare(`SELECT ${CONCEPT_COLS} FROM concepts WHERE lower(name) = lower(?)`).get(trimmed)
 }
 
-export function inferConcept(...parts) {
+export function ensureNamedConcept(name, courseCode = '') {
+  const trimmed = String(name || '').trim()
+  if (!trimmed) return null
+  const existing = conceptByName(trimmed, courseCode)
+  if (existing) return existing
+  const code = String(courseCode || '').trim().toUpperCase() || 'GENERAL'
+  let id = isCatalogCourse(code) ? slugifyConcept(trimmed) : `${slugifyConcept(code)}-${slugifyConcept(trimmed)}`
+  if (conceptById(id)) id = `${id}-${Date.now().toString(36)}`
+  const maxOrder = db
+    .prepare('SELECT COALESCE(MAX(sort_order), 0) AS n FROM concepts WHERE course_code = ?')
+    .get(code).n
+  db.prepare(
+    `INSERT INTO concepts (id, course_code, name, sort_order, on_gps, prereq_id) VALUES (?, ?, ?, ?, 1, NULL)`,
+  ).run(id, code, trimmed, maxOrder + 1)
+  return conceptById(id)
+}
+
+export function inferConcept(...args) {
+  let courseCode = ''
+  const parts = args.filter((part) => {
+    if (part && typeof part === 'object' && !Array.isArray(part) && part.courseCode != null) {
+      courseCode = part.courseCode
+      return false
+    }
+    return true
+  })
   const q = parts
     .flat()
     .filter(Boolean)
@@ -51,9 +112,12 @@ export function inferConcept(...parts) {
     .toLowerCase()
   if (!q.trim()) return null
 
+  const pool = courseCode ? listConcepts(courseCode) : listConcepts()
+  if (!pool.length) return null
+
   let best = null
   let bestScore = 0
-  for (const c of listConcepts()) {
+  for (const c of pool) {
     let score = 0
     const name = c.name.toLowerCase()
     if (q.includes(name)) score += name.length + 12
@@ -174,10 +238,21 @@ export function cloneFallbackDiagnosis(overrides = {}) {
   return diagnosis
 }
 
-export function diagnosisFromEvidence({ concept, question, conversation = [], confidence, reasoning } = {}) {
+export function diagnosisFromEvidence({
+  concept,
+  question,
+  conversation = [],
+  confidence,
+  reasoning,
+  courseLabel,
+  courseCode,
+} = {}) {
   const answers = conversation.map((c) => c.answer).filter(Boolean)
   const lastAnswer = answers[answers.length - 1] || ''
-  if (concept?.id === 'nested-loops' || looksLikeNestedLoop(question)) {
+  const mayaNested =
+    concept?.id === 'nested-loops' ||
+    (looksLikeNestedLoop(question) && (!courseCode || isCatalogCourse(courseCode)))
+  if (mayaNested) {
     return cloneFallbackDiagnosis({
       confidence,
       reasoning: reasoning || lastAnswer || undefined,
@@ -185,9 +260,10 @@ export function diagnosisFromEvidence({ concept, question, conversation = [], co
     })
   }
 
-  const topic = concept?.name || 'this idea'
+  const topic = concept?.name || shortTopic(question) || 'this idea'
   const prereq = prereqOf(concept)
   const next = nextOnPath(concept)
+  const unit = courseLabel || 'this unit'
   return {
     understood: [],
     developing: [],
@@ -198,7 +274,7 @@ export function diagnosisFromEvidence({ concept, question, conversation = [], co
         ? `You asked about ${topic}: “${String(question).slice(0, 160)}”. The checkpoints suggest the underlying idea is still shaky.`
         : `The checkpoints suggest ${topic} is the current gap.`,
       whyItMatters: concept
-        ? `${topic} sits on the IFB104 path. Until it clicks, later topics keep surprising you — and a 20-minute peer swap is more useful than another generic tutorial.`
+        ? `${topic} sits on the ${unit} path. Until it clicks, later topics keep surprising you — and a 20-minute peer swap is more useful than another generic tutorial.`
         : 'Name the lecture topic if you can, then a peer in the same unit can walk a tiny example with you.',
     },
     nextConcept: next?.name || '',
@@ -229,10 +305,121 @@ export function diagnosisFromEvidence({ concept, question, conversation = [], co
   }
 }
 
-export function resolveGapConcept(diagnosis, fallbackText) {
+function shapeGpsNode(c) {
+  return {
+    id: c.id,
+    name: c.name,
+    status: c.status || 'unmapped',
+    confidence: c.confidence,
+    evidence: c.evidence,
+  }
+}
+
+export function buildGpsPath(userId, { focusConceptId, courseCode } = {}) {
+  const code = String(courseCode || '').trim()
+  const catalog = isCatalogCourse(code)
+  let spine
+
+  if (catalog) {
+    spine = db
+      .prepare(
+        `
+        SELECT c.id, c.name, c.sort_order, c.prereq_id, uc.status, uc.confidence, uc.evidence, uc.verified
+        FROM concepts c
+        LEFT JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
+        WHERE c.on_gps = 1 AND c.course_code = 'IFB104'
+        ORDER BY c.sort_order
+      `,
+      )
+      .all(userId)
+      .map(shapeGpsNode)
+  } else if (code) {
+    spine = db
+      .prepare(
+        `
+        SELECT c.id, c.name, c.sort_order, c.prereq_id, uc.status, uc.confidence, uc.evidence, uc.verified
+        FROM concepts c
+        JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
+        WHERE c.course_code = ?
+        ORDER BY c.sort_order
+      `,
+      )
+      .all(userId, code)
+      .map(shapeGpsNode)
+  } else {
+    spine = db
+      .prepare(
+        `
+        SELECT c.id, c.name, c.sort_order, c.prereq_id, uc.status, uc.confidence, uc.evidence, uc.verified
+        FROM concepts c
+        JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
+        ORDER BY c.sort_order
+      `,
+      )
+      .all(userId)
+      .map(shapeGpsNode)
+  }
+
+  const path = [...spine]
+  if (focusConceptId && !path.some((n) => n.id === focusConceptId)) {
+    const extra = db
+      .prepare(
+        `
+        SELECT c.id, c.name, c.sort_order, c.prereq_id, uc.status, uc.confidence, uc.evidence
+        FROM concepts c
+        LEFT JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
+        WHERE c.id = ?
+      `,
+      )
+      .get(userId, focusConceptId)
+    if (extra) {
+      const node = shapeGpsNode({ ...extra, status: extra.status || 'gap' })
+      const prereqIdx = path.findIndex((n) => n.id === extra.prereq_id)
+      if (prereqIdx >= 0) path.splice(prereqIdx + 1, 0, node)
+      else path.push(node)
+    }
+  }
+
+  const seen = new Set(path.map((n) => n.name.toLowerCase()))
+  const openQuestions = db
+    .prepare(
+      `
+      SELECT id, title, concept FROM questions
+      WHERE author_id = ? AND status = 'open'
+      ORDER BY created_at DESC LIMIT 2
+    `,
+    )
+    .all(userId)
+  for (const q of openQuestions) {
+    const inferred = inferConcept(q.concept, q.title, { courseCode: code })
+    if (inferred && path.some((n) => n.id === inferred.id)) {
+      seen.add((q.concept || q.title || '').toLowerCase())
+      continue
+    }
+    const label = (q.concept || q.title || '').trim()
+    if (!label || seen.has(label.toLowerCase())) continue
+    path.push({
+      id: `q-${q.id}`,
+      name: label.slice(0, 28),
+      status: 'gap',
+      confidence: 'Unsure',
+      evidence: q.title,
+    })
+    seen.add(label.toLowerCase())
+  }
+
+  return path
+}
+
+export function resolveGapConcept(diagnosis, fallbackText, courseCode) {
+  const byId = conceptById(diagnosis?.gap?.conceptId)
+  if (byId && (!courseCode || isCatalogCourse(courseCode) || byId.course_code === String(courseCode).trim())) {
+    return byId
+  }
   return (
-    conceptById(diagnosis?.gap?.conceptId) ||
-    conceptByName(diagnosis?.gap?.concept) ||
-    inferConcept(diagnosis?.gap?.concept, fallbackText)
+    conceptByName(diagnosis?.gap?.concept, courseCode) ||
+    inferConcept(diagnosis?.gap?.concept, fallbackText, { courseCode }) ||
+    (diagnosis?.gap?.concept ? ensureNamedConcept(diagnosis.gap.concept, courseCode) : null) ||
+    (fallbackText ? ensureNamedConcept(shortTopic(fallbackText), courseCode) : null)
   )
 }

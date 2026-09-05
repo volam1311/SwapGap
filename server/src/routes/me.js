@@ -1,6 +1,7 @@
 import { db, meUser, parseJson } from '../db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { buildCertificate } from '../services/certificate.js'
+import { buildGpsPath } from '../services/concepts.js'
 
 function counts(userId) {
   const rows = db.prepare('SELECT status, COUNT(*) AS n FROM user_concepts WHERE user_id = ? GROUP BY status').all(userId)
@@ -83,13 +84,7 @@ export function meRoutes(app) {
   })
 
   app.get('/api/me/dashboard', requireAuth, (req, res) => {
-    const gps = db.prepare(`
-      SELECT c.id, c.name, c.sort_order, uc.status, uc.confidence
-      FROM concepts c
-      LEFT JOIN user_concepts uc ON uc.concept_id = c.id AND uc.user_id = ?
-      WHERE c.on_gps = 1
-      ORDER BY c.sort_order
-    `).all(req.user.id)
+    const gps = buildGpsPath(req.user.id, { courseCode: req.user.courseCode })
 
     const recent = db.prepare(`
       SELECT * FROM diagnostics WHERE user_id = ? ORDER BY created_at DESC LIMIT 3
