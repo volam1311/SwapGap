@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { TopBar } from './ui.jsx'
+import { Brand, TopBar } from './ui.jsx'
 
 const links = [
   { to: '/home', label: 'Home', icon: '⌂' },
@@ -14,10 +14,7 @@ export function AppShell() {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <NavLink to="/home" className="brand">
-          <span className="brand-mark">⇄</span>
-          GapSwap
-        </NavLink>
+        <Brand to="/home" />
         <nav className="nav-list">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>

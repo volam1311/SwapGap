@@ -140,7 +140,7 @@ export function Discover() {
         </button>
       </div>
       <div className="card pad stack">
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           {usingLabel ? (
             <>
               Diagnosing for <b>{usingLabel}</b>

@@ -50,7 +50,7 @@ export function PostSession() {
       {result && (
         <>
           {result.passed && (
-            <div className="card pad" style={{ background: '#e7f7ef' }}>
+            <div className="card pad success-card">
               <h2>{result.mastered} — Mastered</h2>
               <p>
                 This is the success metric: after a 20-minute reciprocal swap, the gap moved from red to green
@@ -95,7 +95,7 @@ export function PostSession() {
           </div>
           <div className="card pad stack">
             <h3>Rate your peer</h3>
-            <p style={{ color: '#5b6b7f' }}>
+            <p className="muted">
               Ratings count toward your end-of-semester Peer Teaching & Support certificate for a CV or
               LinkedIn. They reward good support — they do not certify professional tutors.
             </p>

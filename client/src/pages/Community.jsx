@@ -41,7 +41,7 @@ export function Questions() {
       <h1 className="page-title">Questions board</h1>
       <form className="card pad stack" onSubmit={post}>
         <h3>Ask asynchronously</h3>
-        <p style={{ color: '#5b6b7f' }}>Posting a question also places that topic on your Learning GPS.</p>
+        <p className="muted">Posting a question also places that topic on your Learning GPS.</p>
         <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <textarea placeholder="What are you stuck on?" value={body} onChange={(e) => setBody(e.target.value)} />
         <label className="field">
@@ -164,7 +164,7 @@ export function Profile() {
           <span>Skills you can teach</span>
           <input value={form.teachable} onChange={(e) => setForm({ ...form, teachable: e.target.value })} />
         </label>
-        <p style={{ color: '#5b6b7f', fontSize: 13 }}>
+        <p className="muted" style={{ fontSize: 13 }}>
           These are suggested after a diagnostic. Only keep topics you are willing to teach a peer.
         </p>
         <button className="btn btn-primary">Save profile</button>
@@ -182,7 +182,7 @@ export function Profile() {
       </div>
       <div className="card pad stack">
         <h3>Employability credential</h3>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           {dash.certificate?.eligible
             ? `${dash.certificate.title} for ${dash.certificate.term} is ready to add to your CV and LinkedIn.`
             : 'Teach or support a peer this semester to earn a certificate you can put on a CV or LinkedIn.'}
@@ -191,7 +191,7 @@ export function Profile() {
           {dash.certificate?.eligible ? 'View certificate' : 'See how to earn it'}
         </Link>
       </div>
-      <p style={{ color: '#5b6b7f' }}>Email is hidden from other students. Contact details are never shown publicly.</p>
+      <p className="muted">Email is hidden from other students. Contact details are never shown publicly.</p>
     </div>
   )
 }

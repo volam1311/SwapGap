@@ -77,7 +77,7 @@ export function Diagnose() {
         </div>
         <div className="card pad stack">
           <h3>Strengths we can see</h3>
-          <p style={{ color: '#5b6b7f' }}>
+          <p className="muted">
             These showed up as solid in this check. Tick any you are willing to teach a peer.
           </p>
           {offers.length === 0 && <p>No verified teaching topics yet — keep practising and we’ll ask again.</p>}
@@ -117,7 +117,7 @@ export function Diagnose() {
           <p>{data.checkpoint.problem}</p>
           {data.checkpoint.code && <pre className="code-block">{data.checkpoint.code}</pre>}
         </div>
-        <div className="card pad stack" style={{ background: '#f6f3ff' }}>
+        <div className="card pad stack prompt-card">
           <b>Learning GPS asks</b>
           <p>{data.checkpoint.prompt}</p>
         </div>
@@ -138,7 +138,7 @@ export function Diagnose() {
             </button>
           ))}
         </div>
-        <p style={{ color: '#5b6b7f', fontSize: 13 }}>{data.checkpoint.checking}</p>
+        <p className="muted" style={{ fontSize: 13 }}>{data.checkpoint.checking}</p>
         <button className="btn btn-primary btn-lg" onClick={submit} disabled={busy || !answer}>
           Check my thinking
         </button>

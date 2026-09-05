@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../AuthContext.jsx'
+import logo from '../assets/logo-lockup.png'
+
+export function Brand({ to = '/' }) {
+  const img = <img src={logo} alt="GapSwap" className="brand-logo" />
+  if (!to) return <div className="brand">{img}</div>
+  return (
+    <Link to={to} className="brand">
+      {img}
+    </Link>
+  )
+}
 
 export function Avatar({ name, color, size = 34 }) {
   return (

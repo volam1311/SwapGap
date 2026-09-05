@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api.js'
+import { Brand } from '../components/ui.jsx'
 
 function copy(text) {
   return navigator.clipboard.writeText(text)
@@ -120,7 +121,7 @@ export function Certificate() {
       <CertificateMark cert={cert} />
       <div className="card pad stack cert-actions">
         <h3>Add to LinkedIn or your CV</h3>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           LinkedIn → Add profile section → Licenses & certifications. Organisation: GapSwap. Issue date:{' '}
           {cert.term.issueMonthLabel}. Credential ID: {cert.id}.
         </p>
@@ -145,13 +146,13 @@ export function Certificate() {
         >
           {copied === 'url' ? 'Copied credential URL' : 'Copy credential URL'}
         </button>
-        <p style={{ color: '#5b6b7f', fontSize: 13 }}>
+        <p className="muted" style={{ fontSize: 13 }}>
           Anyone with this link can view the credential without signing in. On the same Wi‑Fi, share the
           Network URL from your terminal (not localhost). It is not on the public internet until GapSwap is
           deployed.
         </p>
       </div>
-      <p style={{ color: '#5b6b7f', fontSize: 13 }}>{cert.disclaimer}</p>
+      <p className="muted" style={{ fontSize: 13 }}>{cert.disclaimer}</p>
     </div>
   )
 }
@@ -172,7 +173,7 @@ export function CredentialPublic() {
       <div className="auth-wrap">
         <div className="card pad auth-card stack">
           <h1>Credential not found</h1>
-          <p style={{ color: '#5b6b7f' }}>{error}</p>
+          <p className="muted">{error}</p>
           <Link className="btn btn-primary" to="/">
             Back to GapSwap
           </Link>
@@ -184,13 +185,11 @@ export function CredentialPublic() {
   return (
     <div className="auth-wrap">
       <div className="stack" style={{ width: 'min(720px, 100%)' }}>
-        <Link to="/" className="brand" style={{ color: '#0e2744', margin: 0 }}>
-          GapSwap
-        </Link>
+        <Brand />
         <p className="page-sub">Verified peer-learning credential</p>
         <CertificateMark cert={cert} />
-        <p style={{ color: '#5b6b7f', fontSize: 13 }}>{cert.disclaimer}</p>
-        <p style={{ color: '#5b6b7f', fontSize: 13 }}>
+        <p className="muted" style={{ fontSize: 13 }}>{cert.disclaimer}</p>
+        <p className="muted" style={{ fontSize: 13 }}>
           This page is public — no GapSwap account required.
         </p>
       </div>

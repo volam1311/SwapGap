@@ -55,9 +55,9 @@ export function Home() {
       </div>
       <div className="grid-2">
         <div className="card pad hero-card">
-          <div style={{ fontSize: 36, color: '#1d4e89' }}>◎</div>
+          <div className="hero-icon">◎</div>
           <h2>Find your next knowledge gap</h2>
-          <p style={{ color: '#5b6b7f', margin: '-6px 0 14px' }}>
+          <p className="muted" style={{ margin: '-6px 0 14px' }}>
             Tutors cannot sit with every first-year student. Diagnose why you are stuck, then swap with a peer
             in the same unit.
           </p>
@@ -78,7 +78,7 @@ export function Home() {
           </div>
           {session && (
             <div className="card pad">
-              <small style={{ color: '#5b6b7f' }}>Upcoming session</small>
+              <small>Upcoming session</small>
               <h3>GapSwap with {session.partnerName}</h3>
               <p>
                 {when.toLocaleDateString('en-AU', { weekday: 'long' })} ·{' '}
@@ -94,7 +94,7 @@ export function Home() {
       <div className="grid-2">
         <div className="card pad">
           <h3>Recommended next action</h3>
-          <p style={{ color: '#5b6b7f', margin: '8px 0 12px' }}>
+          <p className="muted" style={{ margin: '8px 0 12px' }}>
             {gapNode
               ? `${gapNode.name} is on your GPS. Diagnose it if you have not, swap with a peer, then prove the gap closed.`
               : hasGap
@@ -121,18 +121,18 @@ export function Home() {
               ))}
             </div>
           ) : (
-            <p style={{ color: '#5b6b7f', marginTop: 10 }}>
+            <p className="muted" style={{ marginTop: 10 }}>
               None yet. After a diagnostic, GapSwap will ask if you are willing to teach a verified strength.
             </p>
           )}
-          <p style={{ marginTop: 12, color: '#5b6b7f' }}>
+          <p className="muted" style={{ marginTop: 12 }}>
             {data.stats.sessionsCompleted} completed sessions · reliability {data.stats.reliability}
           </p>
         </div>
       </div>
       <div className="card pad stack">
         <h3>End-of-semester credential</h3>
-        <p style={{ color: '#5b6b7f' }}>
+        <p className="muted">
           {data.certificate?.eligible
             ? `${data.certificate.title} for ${data.certificate.term} is ready. Add it to LinkedIn or copy a CV bullet.`
             : 'Teach a topic you already understand, or answer on the board, to earn a Peer Teaching & Support certificate for this semester.'}
