@@ -14,6 +14,7 @@ const primary = [
 
 const utility = [
   { to: '/certificate', label: 'Certificate', icon: 'certificate' },
+  { to: '/payment', label: 'Payment', icon: 'card' },
   { to: '/help', label: 'Help & support', icon: 'help' },
   { to: '/settings', label: 'Settings', icon: 'settings' },
 ]
