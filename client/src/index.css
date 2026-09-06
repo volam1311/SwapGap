@@ -775,6 +775,76 @@ label.choice span { display: grid; gap: 2px; }
 .cert-id { margin-top: 18px; color: var(--muted); font-size: 13px; }
 .cert-actions .btn { justify-content: center; }
 
+.pay-plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.pay-plan {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  display: grid;
+  gap: 8px;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.pay-plan:hover { background: var(--paper); }
+.pay-plan.active {
+  border-color: var(--navy-3);
+  background: #f5f8fd;
+}
+.pay-price {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  color: var(--navy);
+}
+.pay-price small {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.pay-features {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.pay-features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.pay-features .icon { color: var(--navy-3); }
+.pay-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.pay-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.pay-line b { color: var(--ink); font-weight: 600; }
+.pay-total {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-weight: 600;
+}
+
 @media print {
   .cert-actions { display: none !important; }
   .page { max-width: none; }
@@ -782,7 +852,7 @@ label.choice span { display: grid; gap: 2px; }
 }
 
 @media (max-width: 980px) {
-  .grid-2, .hero-copy, .session-grid, .evidence, .swap-heads, .landing-proof, .metric-strip, .cert-meta, .loop { grid-template-columns: 1fr; }
+  .grid-2, .hero-copy, .session-grid, .evidence, .swap-heads, .landing-proof, .metric-strip, .cert-meta, .loop, .pay-plans { grid-template-columns: 1fr; }
   .page { padding: 18px 18px calc(96px + env(safe-area-inset-bottom)); }
   .page-title { font-size: 28px; }
   .hero-copy h1 { font-size: 36px; }

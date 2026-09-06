@@ -13,6 +13,7 @@ import { SessionPage, Sessions } from './pages/Session.jsx'
 import { PostSession } from './pages/PostSession.jsx'
 import { Help, Profile, Questions, Settings } from './pages/Community.jsx'
 import { Certificate, CredentialPublic } from './pages/Certificate.jsx'
+import { Payment } from './pages/Payment.jsx'
 
 function Private({ children }) {
   const { user, ready } = useAuth()
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="/questions" element={<Questions />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/certificate" element={<Certificate />} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/help" element={<Help />} />
           </Route>

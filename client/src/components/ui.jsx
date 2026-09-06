@@ -87,6 +87,13 @@ const ICONS = {
       <path d="M9.2 13.4 8 20l4-2.2L16 20l-1.2-6.6" />
     </>
   ),
+  card: (
+    <>
+      <rect x="3.5" y="6" width="17" height="12" rx="2" />
+      <path d="M3.5 10h17" />
+      <path d="M7 15h4" />
+    </>
+  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />
