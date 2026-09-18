@@ -2,7 +2,7 @@
 
 AI-powered triage for first-year university students: diagnose the misconception, map it on a Learning GPS, route a scripted peer check, then verify — or escalate to Student Success.
 
-Built for [Futura Remix 2026](https://github.com/volam1311/SwapGap). Success is a red GPS node turning green after a transfer quiz — not a session booked.
+Link to our presentation: [Slide](https://canva.link/gafi9mku5dyn0dj)
 
 ## Architecture
 
