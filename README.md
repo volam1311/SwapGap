@@ -2,6 +2,8 @@
 
 AI-powered triage for first-year university students: diagnose the misconception, map it on a Learning GPS, route a scripted peer check, then verify — or escalate to Student Success.
 
+We won the Potential Solution Award for QLD State Round.
+
 Link to our presentation: [Slide](https://canva.link/gafi9mku5dyn0dj)
 
 ## Architecture
@@ -153,8 +155,10 @@ SwapGap/
 │   │   ├── routes/             # auth, diagnose, gps, matches, sessions, community, certificate
 │   │   └── services/           # OpenAI, concepts, matching, session packs, certificate
 │   └── .env.example
-├── .github/workflows/          # CI build + Railway deploy
-├── railpack.json               # Railway Node 22 start command
+├── .github/workflows/          # CI build + Render deploy
+├── Dockerfile                  # Production image; SQLite on /data
+├── docker-compose.yml          # Named volume so the DB survives rebuilds
+├── render.yaml                 # Render Docker web service + persistent disk
 └── package.json                # npm run dev | build | start | seed | share
 ```
 
@@ -187,18 +191,31 @@ SwapGap/
 Pushing to `main` runs two GitHub Actions workflows:
 
 - **`.github/workflows/ci.yml`** — Node 22, `npm ci`, client build
-- **`.github/workflows/deploy.yml`** — `railway up` to the production service
+- **`.github/workflows/deploy.yml`** — Render CLI `deploys create` to the production web service
 
-### Deploy on Railway
+### Deploy on Render
 
-Express already serves `client/dist`, so judges get one HTTPS URL.
+Express already serves `client/dist`, so judges get one HTTPS `onrender.com` URL. SQLite is stored on a persistent disk at `/data` (see `Dockerfile` / `render.yaml`). Disks need a paid instance — the blueprint uses the smallest one (`0.5c-512mb`).
 
-1. In Railway: project **Settings → Tokens** → create a project token.
-2. In GitHub: repo **Settings → Secrets and variables → Actions**
-   - Secret `RAILWAY_TOKEN` = that project token
-   - Variable `RAILWAY_SERVICE` = the **app** service name (not Postgres). Required when the project has more than one service.
-3. In Railway service settings, turn **off** GitHub auto-deploy so only this workflow ships the app.
-4. Set `OPENAI_API_KEY` and `JWT_SECRET` on the Railway service. Add a volume and `DATA_DIR` if you want SQLite to survive redeploys.
+1. In Render: **New → Blueprint** from this repo (uses `render.yaml`), or create a **Web Service** with **Docker** runtime:
+   - Dockerfile path: `./Dockerfile`
+   - Health check path: `/api/health`
+   - Disk: 1 GB mounted at `/data`
+   - Env: `DATA_DIR=/data`
+2. In Render **Account Settings → API Keys**, create a key. Copy the web service ID (`srv-…`) from the service URL or Settings.
+3. In GitHub: repo **Settings → Secrets and variables → Actions**
+   - Secret `RENDER_API_KEY` = that API key
+   - Secret or variable `RENDER_SERVICE_ID` = the web service ID
+4. In Render service settings, turn **auto-deploy off** so only this workflow ships the app (already set in `render.yaml`).
+5. Set `OPENAI_API_KEY` and `JWT_SECRET` on the Render service.
+
+Local production-style run (DB kept in the `swapgap-data` volume):
+
+```bash
+docker compose up --build
+```
+
+App: http://localhost:4000 — health: http://localhost:4000/api/health
 
 > [!WARNING]
-> Without a volume, the SQLite file is wiped on every Railway redeploy and the Maya demo reseeds from scratch.
+> Render’s free plan cannot attach a disk. Without `/data` on a persistent disk, the SQLite file is wiped on every redeploy and the Maya demo reseeds from scratch.
